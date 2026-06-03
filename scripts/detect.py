@@ -39,12 +39,12 @@ MIN_CORNER_DISTANCE = 10  # pixels — filters out tiny ghost detections
 COOLDOWN_SECONDS = 10
 
 # Camera resolution — higher = better detection but slower processing
-FRAME_WIDTH = 1920
-FRAME_HEIGHT = 1080
+FRAME_WIDTH = 3280 
+FRAME_HEIGHT = 2464
 
 # How many frames to skip between detection attempts (0 = every frame)
 # Set to 2 on Pi Zero, 0 on Pi 4
-FRAME_SKIP = 1
+FRAME_SKIP = 5
 
 # Data and image output directories (relative to this script)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -84,10 +84,8 @@ def setup_camera():
     config = cam.create_video_configuration(
         main={"size": (FRAME_WIDTH, FRAME_HEIGHT), "format": "RGB888"},
         controls={
-            "ExposureTime": 2000,       # 2ms — fast shutter to reduce motion blur
-            "AnalogueGain": 2.0,        # Low gain — plenty of light outside
-            "AeEnable": True,           # Auto-exposure ON (handles cloud cover)
-            "AwbEnable": True,          # Auto white balance ON
+            "AeEnable": True,
+            "AwbEnable": True,
         }
     )
     cam.configure(config)
@@ -103,14 +101,16 @@ def setup_detector():
     params = cv2.aruco.DetectorParameters()
 
     # Tuned for small (4-5mm) tags on moving bees
-    params.adaptiveThreshWinSizeMin = 3
-    params.adaptiveThreshWinSizeMax = 23
-    params.adaptiveThreshWinSizeStep = 4
-    params.minMarkerPerimeterRate = 0.01   # Allow very small markers
-    params.maxMarkerPerimeterRate = 0.3
-    params.polygonalApproxAccuracyRate = 0.05
-    params.minCornerDistanceRate = 0.01
-    params.errorCorrectionRate = 0.9       # High error correction for small tags
+    params.adaptiveThreshWinSizeMin    = 3
+    params.adaptiveThreshWinSizeMax    = 53
+    params.adaptiveThreshWinSizeStep   = 4
+    params.minMarkerPerimeterRate      = 0.01
+    params.maxMarkerPerimeterRate      = 4.0
+    params.polygonalApproxAccuracyRate = 0.1
+    params.minCornerDistanceRate       = 0.01
+    params.errorCorrectionRate         = 1.0
+    params.useAruco3Detection          = True
+    params.minSideLengthCanonicalImg   = 32
 
     detector = cv2.aruco.ArucoDetector(aruco_dict, params)
     print("[DETECTOR] AprilTag 36h11 detector ready")
@@ -194,6 +194,7 @@ def run_detection(site):
                     side_length = np.linalg.norm(
                         tag_corners[0][0] - tag_corners[0][1]
                     )
+                    print(f"  [SIZE] Tag {tag_id} side: {side_length:.1f}px")
                     if side_length < MIN_CORNER_DISTANCE:
                         continue
 
