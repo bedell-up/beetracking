@@ -224,7 +224,7 @@ def run_detection(site):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Bee AprilTag Detector")
-    parser.add_argument("--site", required=True, choices=["A", "B"],
+    parser.add_argument("--site", required=True,
                         help="Which green space this station is monitoring (A or B)")
     args = parser.parse_args()
     run_detection(args.site)
