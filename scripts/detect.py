@@ -194,7 +194,6 @@ def run_detection(site):
                     side_length = np.linalg.norm(
                         tag_corners[0][0] - tag_corners[0][1]
                     )
-                    print(f"  [SIZE] Tag {tag_id} side: {side_length:.1f}px")
                     if side_length < MIN_CORNER_DISTANCE:
                         continue
 
