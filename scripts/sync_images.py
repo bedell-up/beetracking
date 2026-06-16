@@ -11,9 +11,9 @@ Requirements:
     pip3 install google-auth google-auth-httplib2 google-api-python-client --break-system-packages
 
 Setup:
-    - credentials.json must be in /home/pi/beetracking/
-    - A folder named 'BeeTracker Images' must exist in your Google Drive
-    - Share that folder with the service account email from credentials.json
+    - credentials.json must be in /home/pi/bee/
+    - Share the BeeTracker Images folder with the service account:
+      beetracker-sync@beetracker-498519.iam.gserviceaccount.com
 """
 
 import os
@@ -28,15 +28,15 @@ from googleapiclient.http import MediaFileUpload
 # CONFIGURATION
 # ─────────────────────────────────────────────
 
-CREDENTIALS  = "/home/pi/beetracking/credentials.json"
-SCOPES       = ["https://www.googleapis.com/auth/drive"]
+CREDENTIALS     = "/home/pi/beetracking/credentials.json"
+SCOPES          = ["https://www.googleapis.com/auth/drive"]
 
-# Name of the folder in Google Drive to upload into
-# A subfolder per site will be created automatically inside this
-DRIVE_FOLDER = "BeeTracker Images"
+# Google Drive folder ID for BeeTracker Images
+# From: https://drive.google.com/drive/folders/1frIV4BzoUYKyYqDe2r9NNqPnV4rxNGp8
+DRIVE_FOLDER_ID = "1frIV4BzoUYKyYqDe2r9NNqPnV4rxNGp8"
 
-BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR     = os.path.join(BASE_DIR, "..", "data")
+BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR        = os.path.join(BASE_DIR, "..", "data")
 
 
 def get_verify_dir(site):
@@ -49,26 +49,22 @@ def connect_to_drive():
     return service
 
 
-def get_or_create_folder(service, folder_name, parent_id=None):
-    """Find a folder by name (optionally under a parent), create if not found."""
-    query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
-    if parent_id:
-        query += f" and '{parent_id}' in parents"
-
+def get_or_create_folder(service, folder_name, parent_id):
+    """Find a folder by name under a parent, create if not found."""
+    query   = (f"name='{folder_name}' and "
+               f"mimeType='application/vnd.google-apps.folder' and "
+               f"'{parent_id}' in parents and trashed=false")
     results = service.files().list(q=query, fields="files(id, name)").execute()
     files   = results.get("files", [])
 
     if files:
         return files[0]["id"]
 
-    # Create folder
     metadata = {
         "name":     folder_name,
-        "mimeType": "application/vnd.google-apps.folder"
+        "mimeType": "application/vnd.google-apps.folder",
+        "parents":  [parent_id]
     }
-    if parent_id:
-        metadata["parents"] = [parent_id]
-
     folder = service.files().create(body=metadata, fields="id").execute()
     print(f"[DRIVE] Created folder: {folder_name}")
     return folder["id"]
@@ -100,7 +96,6 @@ def sync_images(site):
         print(f"[IMAGE SYNC] No verification image directory found. Nothing to sync.")
         return
 
-    # Find all JPG images
     images = sorted(glob.glob(os.path.join(verify_dir, "*.jpg")))
     if not images:
         print(f"[IMAGE SYNC] No images to sync.")
@@ -108,24 +103,20 @@ def sync_images(site):
 
     print(f"[IMAGE SYNC] Found {len(images)} images to upload")
 
-    # Connect to Drive
     try:
         service = connect_to_drive()
     except Exception as e:
         print(f"[ERROR] Could not connect to Google Drive: {e}")
         return
 
-    # Get or create folder structure:
-    # BeeTracker Images / Site A / 2026-06-14 /
+    # Folder structure: BeeTracker Images / Site A / 2026-06-16 /
     try:
-        root_id  = get_or_create_folder(service, DRIVE_FOLDER)
-        site_id  = get_or_create_folder(service, f"Site {site}", parent_id=root_id)
-        date_id  = get_or_create_folder(service, today, parent_id=site_id)
+        site_id = get_or_create_folder(service, f"Site {site}", parent_id=DRIVE_FOLDER_ID)
+        date_id = get_or_create_folder(service, today, parent_id=site_id)
     except Exception as e:
         print(f"[ERROR] Could not create Drive folder structure: {e}")
         return
 
-    # Upload each image
     uploaded = 0
     skipped  = 0
     failed   = 0
@@ -134,7 +125,6 @@ def sync_images(site):
     for filepath in images:
         filename = os.path.basename(filepath)
         try:
-            # Skip if already uploaded
             if file_exists_in_drive(service, filename, date_id):
                 skipped += 1
                 os.remove(filepath)
@@ -143,8 +133,6 @@ def sync_images(site):
 
             upload_image(service, filepath, filename, date_id)
             uploaded += 1
-
-            # Delete from SD card after successful upload
             os.remove(filepath)
             deleted += 1
 
@@ -152,13 +140,12 @@ def sync_images(site):
             print(f"  [WARN] Failed to upload {filename}: {e}")
             failed += 1
 
-    print(f"\n[IMAGE SYNC] ✓ Complete")
-    print(f"  Uploaded  : {uploaded}")
-    print(f"  Skipped   : {skipped} (already in Drive)")
-    print(f"  Deleted   : {deleted} from SD card")
+    print(f"\n[IMAGE SYNC] Complete")
+    print(f"  Uploaded : {uploaded}")
+    print(f"  Skipped  : {skipped} (already in Drive)")
+    print(f"  Deleted  : {deleted} from SD card")
     if failed:
-        print(f"  Failed    : {failed} (left on SD card)")
-
+        print(f"  Failed   : {failed} (left on SD card for retry)")
     print(f"  Drive path: BeeTracker Images / Site {site} / {today}/")
 
 
