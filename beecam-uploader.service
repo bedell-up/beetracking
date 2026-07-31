@@ -1,0 +1,15 @@
+[Unit]
+Description=Bee cam image uploader
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/beecam-uploader
+ExecStart=/usr/bin/python3 /home/pi/beecam-uploader/uploader.py --config /home/pi/beecam-uploader/config.ini
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
