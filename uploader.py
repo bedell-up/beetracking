@@ -79,13 +79,13 @@ class State:
         ).fetchall()
         return [r for r in rows if now - r[2] >= backoff_seconds(r[1])]
 
-    def pending_full(self, limit: int):
+    def pending_full(self, limit=None):
         now = time.time()
         rows = self.conn.execute(
             "SELECT filename, full_attempts, last_full_attempt FROM files WHERE full_uploaded = 0"
         ).fetchall()
         ready = [r for r in rows if now - r[2] >= backoff_seconds(r[1])]
-        return ready[:limit]
+        return ready if limit is None else ready[:limit]
 
     def mark_thumb_success(self, filename):
         self.conn.execute(
@@ -121,6 +121,20 @@ def make_thumbnail_bytes(img_path: Path) -> bytes:
         buf = BytesIO()
         im.save(buf, "JPEG", quality=80)
         return buf.getvalue()
+
+
+def fetch_requested(session, cfg):
+    """Ask the server which filenames a human has marked for full-res upload."""
+    url = cfg["server_url"].rstrip("/") + f"/api/requests/{cfg['station_id']}"
+    try:
+        resp = session.get(
+            url, headers={"X-API-Key": cfg["api_key"]}, timeout=REQUEST_TIMEOUT,
+        )
+        resp.raise_for_status()
+        return set(resp.json().get("filenames", []))
+    except Exception as e:
+        log.warning("Could not fetch full-res request list: %s", e)
+        return set()
 
 
 def upload(session, url, api_key, station, filename, mtime, file_bytes, field_name="image"):
@@ -169,20 +183,23 @@ def run(cfg):
                     state.mark_thumb_failure(filename)
                     log.warning("Thumbnail upload failed for %s: %s", filename, e)
 
-            # 3. Full-res: throttled
-            for filename, _, _ in state.pending_full(MAX_FULL_PER_CYCLE):
-                fpath = image_dir / filename
-                if not fpath.exists():
-                    continue
-                try:
-                    full_bytes = fpath.read_bytes()
-                    upload(session, full_url, api_key, station, filename,
-                           fpath.stat().st_mtime, full_bytes)
-                    state.mark_full_success(filename)
-                    log.info("Full-res uploaded: %s", filename)
-                except Exception as e:
-                    state.mark_full_failure(filename)
-                    log.warning("Full-res upload failed for %s: %s", filename, e)
+            # 3. Full-res: only images a human has marked via the gallery, throttled
+            requested = fetch_requested(session, cfg)
+            if requested:
+                candidates = [r for r in state.pending_full() if r[0] in requested]
+                for filename, _, _ in candidates[:MAX_FULL_PER_CYCLE]:
+                    fpath = image_dir / filename
+                    if not fpath.exists():
+                        continue
+                    try:
+                        full_bytes = fpath.read_bytes()
+                        upload(session, full_url, api_key, station, filename,
+                               fpath.stat().st_mtime, full_bytes)
+                        state.mark_full_success(filename)
+                        log.info("Full-res uploaded (requested): %s", filename)
+                    except Exception as e:
+                        state.mark_full_failure(filename)
+                        log.warning("Full-res upload failed for %s: %s", filename, e)
 
         except Exception as e:
             log.error("Cycle error: %s", e)

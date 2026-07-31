@@ -34,7 +34,6 @@ site_A_detections.csv       site_B_detections.csv
 | 20,000mAh USB-C power bank | 2 | $25 each | Anker 737 or similar — ~8hr runtime |
 | Weatherproof project box (IP55) | 2 | $10 each | Amazon/electronics surplus |
 | Flexible gooseneck clamp mount | 2 | $8 each | For camera positioning over flower patch |
-| Posca paint pens (4-color set) | 1 | $12 | Backup visual ID system |
 
 **Total: ~$270**
 Budget remaining from $1,000: **~$730** (for additional sensors, travel, or contingency)
