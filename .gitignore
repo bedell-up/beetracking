@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+beetracker_credentials.json
+budget_data.json
+overview_data.json
+groups_config.json
+.claude/settings.local.json

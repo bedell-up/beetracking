@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bombus vosnesenskii — AprilTag Tracking Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="bee-icon" aria-hidden="true">🐝</div>
+      <div>
+        <h1 class="site-title">Bombus vosnesenskii Tracking</h1>
+        <p class="site-subtitle">AprilTag Detection Dashboard · University of Portland · PI: Dr. Tara Prestholdt · Summer 2026</p>
+      </div>
+    </div>
+    <div class="header-controls">
+      <span id="cache-status" class="cache-badge">Loading…</span>
+      <button id="btn-export-pdf" class="btn-export" title="Print / export as PDF">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        Export PDF
+      </button>
+      <button id="btn-refresh" class="btn-refresh" title="Force data refresh from Google Sheets">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Refresh
+      </button>
+      <span id="auto-refresh-badge" class="auto-badge" title="Auto-refreshes every 5 minutes">Auto 5 min</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── Tab bar ───────────────────────────────────────────────────────────────── -->
+<nav class="tab-bar">
+  <div class="tab-inner">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="setup">Setup</button>
+    <button class="tab-btn" data-tab="project">Project Pages</button>
+  </div>
+</nav>
+
+<!-- ── Date range filter bar ─────────────────────────────────────────────────── -->
+<div class="filter-bar" id="filter-bar">
+  <div class="filter-inner">
+    <label class="filter-label">Date range:</label>
+    <input type="date" id="date-start" class="date-input">
+    <span class="filter-sep">→</span>
+    <input type="date" id="date-end" class="date-input">
+    <button id="btn-apply" class="btn-apply">Apply</button>
+    <button id="btn-clear" class="btn-clear">Clear</button>
+    <div class="granularity-group">
+      <label class="filter-label">Granularity:</label>
+      <select id="granularity-select" class="date-input">
+        <option value="day">Daily</option>
+        <option value="hour">Hourly</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ── Dashboard tab ─────────────────────────────────────────────────────────── -->
+<main class="main-content" id="tab-dashboard">
+
+  <!-- Stats cards -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📡</div>
+      <div class="stat-value" id="stat-total">—</div>
+      <div class="stat-label">Total Detections</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🐝</div>
+      <div class="stat-value" id="stat-bees">—</div>
+      <div class="stat-label">Unique Bees</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🏭</div>
+      <div class="stat-value" id="stat-active-stations">—</div>
+      <div class="stat-label">Active Stations</div>
+    </div>
+    <div class="stat-card highlight">
+      <div class="stat-icon">🗺️</div>
+      <div class="stat-value" id="stat-travelers">—</div>
+      <div class="stat-label">Cross-Campus Travelers</div>
+    </div>
+  </section>
+
+  <!-- Station status grid -->
+  <section class="card">
+    <h2 class="card-title">Station Status</h2>
+    <div class="station-grid" id="station-grid"></div>
+  </section>
+
+  <!-- Charts row -->
+  <div class="charts-row">
+    <section class="card chart-card">
+      <h2 class="card-title">Detections per Station</h2>
+      <div class="chart-wrap"><canvas id="chart-station"></canvas></div>
+    </section>
+    <section class="card chart-card">
+      <h2 class="card-title">Detections Over Time</h2>
+      <div class="chart-wrap"><canvas id="chart-time"></canvas></div>
+    </section>
+  </div>
+
+  <!-- Bottom row -->
+  <div class="bottom-row">
+    <section class="card movements-card">
+      <h2 class="card-title">
+        Cross-Campus Movements
+        <span class="badge" id="movement-count">0</span>
+      </h2>
+      <div class="table-wrap">
+        <table class="data-table" id="movements-table">
+          <thead>
+            <tr>
+              <th>Tag ID</th>
+              <th>Detections</th>
+              <th>Group 1 Stations</th>
+              <th>Group 2 Stations</th>
+              <th>First Seen</th>
+              <th>Last Seen</th>
+            </tr>
+          </thead>
+          <tbody id="movements-body">
+            <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card feed-card">
+      <h2 class="card-title">Recent Detections <span class="feed-live-dot" title="Live feed"></span></h2>
+      <div class="feed-wrap" id="feed-wrap">
+        <div class="feed-empty">Loading…</div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<!-- ── Setup tab ─────────────────────────────────────────────────────────────── -->
+<section class="main-content" id="tab-setup" hidden>
+  <div class="card">
+    <h2 class="card-title">Station Group Configuration</h2>
+    <p class="setup-desc">Drag stations between groups to reassign them. Changes affect cross-campus movement calculations and all group labels throughout the dashboard.</p>
+
+    <div class="setup-columns">
+      <div class="setup-col">
+        <div class="setup-col-label">
+          <span class="setup-col-dot g1-dot"></span>Group 1
+        </div>
+        <div class="setup-drop-zone" id="zone-g1" data-zone="g1">
+          <div class="setup-drop-hint">Drop here</div>
+        </div>
+      </div>
+      <div class="setup-col">
+        <div class="setup-col-label">
+          <span class="setup-col-dot g2-dot"></span>Group 2
+        </div>
+        <div class="setup-drop-zone" id="zone-g2" data-zone="g2">
+          <div class="setup-drop-hint">Drop here</div>
+        </div>
+      </div>
+      <div class="setup-col setup-col-unassigned">
+        <div class="setup-col-label">Unassigned</div>
+        <div class="setup-drop-zone" id="zone-unassigned" data-zone="unassigned">
+          <div class="setup-drop-hint">Drop here</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-actions">
+      <button class="btn-save-groups" id="btn-save-groups">Save Configuration</button>
+      <button class="btn-reset-groups" id="btn-reset-groups">Reset to Default</button>
+      <span class="setup-saved-msg" id="setup-saved-msg">✓ Saved</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Project Pages tab ─────────────────────────────────────────────────────── -->
+<section class="main-content" id="tab-project" hidden>
+  <div class="project-grid">
+
+    <a href="/budget" class="project-card" target="_blank">
+      <div class="project-card-icon">💰</div>
+      <div class="project-card-body">
+        <div class="project-card-title">Budget &amp; Expenses</div>
+        <div class="project-card-desc">Track estimated vs. actual costs, add purchases, and manage the project budget.</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a href="/parts" class="project-card" target="_blank">
+      <div class="project-card-icon">🔧</div>
+      <div class="project-card-body">
+        <div class="project-card-title">Parts &amp; Build List</div>
+        <div class="project-card-desc">Components, estimated costs, and hardware specifications for all 8 stations.</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a href="/overview" class="project-card" target="_blank">
+      <div class="project-card-icon">📋</div>
+      <div class="project-card-body">
+        <div class="project-card-title">Project Overview</div>
+        <div class="project-card-desc">Research goals, methodology, timeline, and campus deployment map.</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <div class="project-card project-card-soon">
+      <div class="project-card-icon">📊</div>
+      <div class="project-card-body">
+        <div class="project-card-title">Research Results</div>
+        <div class="project-card-desc">Final analysis, movement patterns, and conclusions from the experiment.</div>
+      </div>
+      <div class="project-card-tag">Coming soon</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Print area (shown only during print) ──────────────────────────────────── -->
+<div id="print-area"></div>
+
+<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <span>University of Portland · SURE 2026 Research</span>
+  <span id="last-updated">Last data fetch: —</span>
+</footer>
+
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

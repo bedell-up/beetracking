@@ -1,0 +1,4 @@
+flask>=3.0
+gunicorn>=20.1
+gspread>=6.0
+google-auth>=2.0

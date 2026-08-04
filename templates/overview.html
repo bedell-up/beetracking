@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bombus vosnesenskii — Project Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:      #1a1f2e;
+  --green:     #22c55e;
+  --green-bg:  #f0fdf4;
+  --green-dim: #16a34a;
+  --green-dark:#14532d;
+  --blue:      #3b82f6;
+  --blue-bg:   #eff6ff;
+  --amber:     #f59e0b;
+  --amber-bg:  #fffbeb;
+  --amber-dim: #b45309;
+  --bg:        #f1f5f9;
+  --white:     #ffffff;
+  --text:      #1f2937;
+  --muted:     #6b7280;
+  --border:    #e5e7eb;
+  --shadow:    0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --font:      'Inter',system-ui,sans-serif;
+  --mono:      'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.header{background:var(--navy);padding:.75rem 2rem;display:flex;align-items:center;gap:.75rem}
+.bee-icon{font-size:28px}
+.header-title{font-size:17px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.header-sub{font-size:12px;color:var(--green);margin-top:1px}
+.nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center}
+.nav a{display:inline-block;padding:.75rem 1rem;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.nav a:hover{color:var(--text)}
+.nav a.active{color:var(--text);border-bottom-color:var(--green)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;padding:6px 0}
+.btn-edit{font-size:12px;font-weight:500;font-family:var(--font);padding:5px 12px;border-radius:6px;cursor:pointer;border:1px solid #bbf7d0;background:var(--green-bg);color:var(--green-dim);transition:background .15s}
+.btn-edit:hover{background:#dcfce7}
+.btn-cancel{font-size:12px;font-weight:500;font-family:var(--font);padding:5px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--muted)}
+.btn-cancel:hover{background:#f3f4f6}
+.saved-msg{font-size:12px;color:var(--green-dim);font-weight:500;opacity:0;transition:opacity .3s}
+.saved-msg.show{opacity:1}
+.edit-mode-banner{display:none;background:var(--green-bg);border-bottom:1px solid #bbf7d0;padding:8px 2rem;font-size:12px;color:var(--green-dark);text-align:center}
+.edit-mode-banner.show{display:block}
+[data-editable][contenteditable="true"]{outline:2px dashed var(--green);border-radius:4px;padding:4px;cursor:text;min-height:1em}
+[data-editable][contenteditable="true"]:focus{outline:2px solid var(--green);background:rgba(240,253,244,.4)}
+.page{max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* HERO */
+.hero{background:var(--white);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:2.5rem;margin-bottom:1.5rem}
+.hero-eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-dim);font-weight:600;margin-bottom:.5rem}
+.hero h1{font-size:24px;font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.25;margin-bottom:.75rem}
+.hero h1 em{font-style:italic;color:var(--green-dim)}
+.hero-sub{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:1.5rem}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px}
+.meta-pill{font-size:12px;padding:4px 12px;border-radius:100px;border:1px solid var(--border);background:var(--bg);color:var(--muted)}
+.meta-pill.green{background:var(--green-bg);color:var(--green-dim);border-color:#bbf7d0}
+.meta-pill.blue{background:var(--blue-bg);color:#1d4ed8;border-color:#bfdbfe}
+.meta-pill.amber{background:var(--amber-bg);color:var(--amber-dim);border-color:#fde68a}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+@media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:1.25rem 1rem;text-align:center}
+.stat.green{background:var(--green-bg);border-color:var(--green)}
+.stat.amber{background:var(--amber-bg);border-color:#f59e0b}
+.stat-val{font-size:26px;font-weight:600;font-family:var(--mono);color:var(--text);line-height:1;margin-bottom:.3rem}
+.stat.green .stat-val{color:var(--green-dim)}
+.stat.amber .stat-val{color:var(--amber-dim)}
+.stat-lbl{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin-bottom:1.25rem;overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:#fafafa}
+.card-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-body{padding:1.5rem}
+.card-body p{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:1rem}
+.card-body p:last-child{margin-bottom:0}
+.pill{font-size:10px;font-weight:500;padding:3px 10px;border-radius:100px;background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.pill-green{background:var(--green-bg);color:var(--green-dim);border-color:#bbf7d0}
+.pill-amber{background:var(--amber-bg);color:var(--amber-dim);border-color:#fde68a}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+@media(max-width:640px){.two-col{grid-template-columns:1fr}}
+
+/* BOXES */
+.highlight-box{background:var(--green-bg);border:1px solid #bbf7d0;border-left:3px solid var(--green);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:13px;color:var(--green-dark);line-height:1.7}
+.highlight-box strong{font-weight:600}
+.info-box{background:var(--blue-bg);border:1px solid #bfdbfe;border-left:3px solid var(--blue);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:13px;color:#1e3a5f;line-height:1.7}
+.info-box strong{font-weight:600}
+.warning-box{background:var(--amber-bg);border:1px solid #fde68a;border-left:3px solid var(--amber);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:13px;color:#78350f;line-height:1.7}
+.warning-box strong{font-weight:600}
+.placeholder-box{background:#fff7ed;border:1px dashed #fdba74;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:13px;color:#9a3412;line-height:1.7}
+.placeholder-box strong{font-weight:600}
+
+/* LIST */
+ul.checklist{list-style:none;margin:.75rem 0}
+ul.checklist li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);padding:5px 0;line-height:1.6}
+ul.checklist li::before{content:'✓';color:var(--green-dim);font-weight:600;font-size:12px;margin-top:2px;flex-shrink:0}
+
+/* TIMELINE */
+.timeline{margin:1rem 0}
+.timeline-item{display:flex;gap:1rem;padding-bottom:1.25rem;position:relative}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-item:not(:last-child)::after{content:'';position:absolute;left:15px;top:32px;bottom:0;width:1px;background:var(--border)}
+.timeline-dot{width:32px;height:32px;border-radius:50%;background:var(--green-bg);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.timeline-dot.amber{background:var(--amber-bg);border-color:var(--amber)}
+.timeline-content{flex:1;padding-top:4px}
+.timeline-date{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px}
+.timeline-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.timeline-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* SITE BOXES */
+.site-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.site-box{border-radius:8px;padding:1rem}
+.site-box-green{background:var(--green-bg);border:1px solid #bbf7d0}
+.site-box-blue{background:var(--blue-bg);border:1px solid #bfdbfe}
+.site-box-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.site-box-green .site-box-label{color:var(--green-dim)}
+.site-box-blue .site-box-label{color:#1d4ed8}
+.site-box-content{font-size:12px;line-height:1.8}
+.site-box-green .site-box-content{color:var(--green-dark)}
+.site-box-blue .site-box-content{color:#1e3a5f}
+
+/* OUTCOMES */
+.outcomes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:1rem 0}
+@media(max-width:640px){.outcomes{grid-template-columns:1fr}}
+.outcome{border-radius:8px;padding:.875rem 1rem;font-size:12px;line-height:1.6}
+.outcome-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.outcome-green{background:var(--green-bg);border:1px solid #bbf7d0;color:var(--green-dark)}
+.outcome-blue{background:var(--blue-bg);border:1px solid #bfdbfe;color:#1e3a5f}
+.outcome-amber{background:var(--amber-bg);border:1px solid #fde68a;color:#78350f}
+
+/* APPENDIX */
+.divider{border:none;border-top:1px solid var(--border);margin:2rem 0}
+.section-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green-dim);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:#bbf7d0}
+.appendix-heading{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.appendix-section{margin-bottom:1.5rem}
+.spec-table{width:100%;border-collapse:collapse;font-size:13px}
+.spec-table tr{border-bottom:1px solid var(--border)}
+.spec-table tr:last-child{border-bottom:none}
+.spec-table td{padding:8px 0;vertical-align:top}
+.spec-table td:first-child{color:var(--muted);width:40%;font-size:12px}
+.spec-table td:last-child{color:var(--text);font-weight:500}
+code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--green-dim);border:1px solid var(--border)}
+.footer{font-size:11px;color:var(--muted);margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <span class="bee-icon">🐝</span>
+  <div>
+    <div class="header-title">Bombus vosnesenskii Tracking</div>
+    <div class="header-sub">AprilTag Detection Dashboard · University of Portland · PI: Dr. Tara Prestholdt · Summer 2026</div>
+  </div>
+</header>
+
+<div class="edit-mode-banner" id="edit-banner">
+  ✏️ Edit mode — click any highlighted section to edit. Click <strong>Save Changes</strong> when done.
+</div>
+
+<nav class="nav">
+  <a href="/">Dashboard</a>
+  <a href="/parts">Parts &amp; Build List</a>
+  <a href="/budget">Budget &amp; Expenses</a>
+  <a href="/overview" class="active">Project Overview</a>
+  <div class="nav-right">
+    <span class="saved-msg" id="saved-msg">✓ Saved</span>
+    <button class="btn-cancel" id="cancel-btn" onclick="cancelEdit()" style="display:none">✕ Cancel</button>
+    <button class="btn-edit" id="edit-btn" onclick="enterEditMode()">✏️ Edit Page</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-eyebrow" data-editable="hero_eyebrow">{% if data.get('hero_eyebrow') %}{{ data['hero_eyebrow'] | safe }}{% else %}Research Project Overview{% endif %}</p>
+    <h1 data-editable="hero_title">{% if data.get('hero_title') %}{{ data['hero_title'] | safe }}{% else %}Pollinator Recovery on Portland's Superfund Shoreline:<br>
+    Tracking <em>Bombus vosnesenskii</em> at the University of Portland{% endif %}</h1>
+    <div data-editable="hero_desc">{% if data.get('hero_desc') %}{{ data['hero_desc'] | safe }}{% else %}
+    <p class="hero-sub">
+      The University of Portland's Franz River Campus sits on the banks of the Portland Harbor
+      Superfund Site — a 10-mile stretch of the lower Willamette River designated by the EPA
+      in 2000 as one of the most contaminated waterways in the Pacific Northwest. Following
+      a decade of active remediation, this project asks a fundamental restoration ecology question:
+      have native pollinators returned to this recovering riparian landscape, and are they
+      functionally connected to the broader campus green space network?
+    </p>
+    <p class="hero-sub" style="margin-top:-.25rem">
+      Using a custom-built 8-station AprilTag detection network, we individually identify
+      <em>Bombus vosnesenskii</em> (yellow-faced bumblebee) workers at both the Franz River Campus
+      riparian corridor and the student-run SLUG garden on upper campus, tracking whether
+      bees move between sites, stay in their capture location, or establish patterns that
+      reveal the ecological connectivity — or isolation — of this recovering habitat.
+    </p>
+    {% endif %}</div>
+    <div class="hero-meta" data-editable="hero_meta">{% if data.get('hero_meta') %}{{ data['hero_meta'] | safe }}{% else %}
+      <span class="meta-pill green">🐝 Bombus vosnesenskii</span>
+      <span class="meta-pill amber">⚠️ Portland Harbor Superfund Site</span>
+      <span class="meta-pill blue">University of Portland</span>
+      <span class="meta-pill blue">Franz River Campus</span>
+      <span class="meta-pill green">SLUG Community Garden</span>
+      <span class="meta-pill">Peer-reviewed publication goal</span>
+      <span class="meta-pill">Summer 2026</span>
+    {% endif %}</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat amber">
+      <div class="stat-val" data-editable="stat_0_val">{% if data.get('stat_0_val') %}{{ data['stat_0_val'] | safe }}{% else %}2000{% endif %}</div>
+      <div class="stat-lbl" data-editable="stat_0_lbl">{% if data.get('stat_0_lbl') %}{{ data['stat_0_lbl'] | safe }}{% else %}EPA Superfund designation year{% endif %}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" data-editable="stat_1_val">{% if data.get('stat_1_val') %}{{ data['stat_1_val'] | safe }}{% else %}2014{% endif %}</div>
+      <div class="stat-lbl" data-editable="stat_1_lbl">{% if data.get('stat_1_lbl') %}{{ data['stat_1_lbl'] | safe }}{% else %}Active remediation completed{% endif %}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" data-editable="stat_2_val">{% if data.get('stat_2_val') %}{{ data['stat_2_val'] | safe }}{% else %}8{% endif %}</div>
+      <div class="stat-lbl" data-editable="stat_2_lbl">{% if data.get('stat_2_lbl') %}{{ data['stat_2_lbl'] | safe }}{% else %}AprilTag detection stations{% endif %}</div>
+    </div>
+    <div class="stat green">
+      <div class="stat-val" data-editable="stat_3_val">{% if data.get('stat_3_val') %}{{ data['stat_3_val'] | safe }}{% else %}64{% endif %}</div>
+      <div class="stat-lbl" data-editable="stat_3_lbl">{% if data.get('stat_3_lbl') %}{{ data['stat_3_lbl'] | safe }}{% else %}Uniquely tagged individuals{% endif %}</div>
+    </div>
+  </div>
+
+  <!-- SITE CONTEXT -->
+  <p class="section-label">Site context &amp; remediation history</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🏭 Portland Harbor Superfund Site</span>
+      <span class="pill pill-amber">EPA designated 2000</span>
+    </div>
+    <div class="card-body" data-editable="superfund_body">{% if data.get('superfund_body') %}{{ data['superfund_body'] | safe }}{% else %}
+      <p>The Portland Harbor Superfund Site encompasses a 10-mile stretch of the lower
+      Willamette River contaminated by over a century of industrial activity — including
+      shipyards, manufacturing, and chronic urban stormwater runoff. Sediments and soils
+      along this corridor are heavily tainted with polychlorinated biphenyls (PCBs),
+      dichlorodiphenyltrichloroethane (DDT), heavy metals, and other persistent organic
+      pollutants that accumulated from the late 19th century through the 20th century.</p>
+
+      <div class="warning-box">
+        <strong>Site contamination:</strong> PCBs · DDT · heavy metals · persistent organic pollutants
+        accumulated through over a century of shipyard activity, industrial manufacturing,
+        and urban stormwater discharge into the lower Willamette River.
+      </div>
+
+      <p>The University of Portland's river-facing property sits directly on this
+      contaminated corridor. In 2006, the university entered into a formal agreement
+      with the EPA to assess and plan remediation of legacy soil and groundwater pollution
+      along the riverbank. Major active remediation — including contaminated soil excavation,
+      heavy metals and PCBs removal, and riverbank capping to prevent further runoff —
+      took place between 2012 and 2014.</p>
+
+      <p>Following remediation, the university developed the <strong>Franz River Campus</strong>,
+      now home to the E.L. Wiegand Environmental Lab, the university boathouse, and
+      restored riparian plantings along the Willamette shoreline. By 2026, the site
+      has had approximately 12 years to begin ecological recovery since active remediation.</p>
+    {% endif %}</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">📅 Remediation timeline</span>
+    </div>
+    <div class="card-body" data-editable="remediation_timeline_body">{% if data.get('remediation_timeline_body') %}{{ data['remediation_timeline_body'] | safe }}{% else %}
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot amber">⚠️</div>
+          <div class="timeline-content">
+            <div class="timeline-date">2000</div>
+            <div class="timeline-title">EPA Superfund Designation</div>
+            <div class="timeline-desc">The Portland Harbor designated a federal Superfund site. A 10-mile stretch of the lower Willamette River identified as one of the most contaminated waterways in the Pacific Northwest due to over a century of industrial activity, shipyards, and urban runoff.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot amber">📋</div>
+          <div class="timeline-content">
+            <div class="timeline-date">2006</div>
+            <div class="timeline-title">University–EPA Agreement</div>
+            <div class="timeline-desc">University of Portland enters into a formal agreement with the EPA to assess and plan remediation of legacy soil and groundwater pollution along the river-facing campus property.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot amber">🚜</div>
+          <div class="timeline-content">
+            <div class="timeline-date">2012–2014</div>
+            <div class="timeline-title">Active Remediation</div>
+            <div class="timeline-desc">Major soil excavation and site-wide environmental remediation. Contaminated soil tainted with heavy metals and PCBs removed. Riverbank professionally capped to prevent further runoff into the Willamette. Riparian plantings established along the shoreline.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">🏛️</div>
+          <div class="timeline-content">
+            <div class="timeline-date">2014–present</div>
+            <div class="timeline-title">Franz River Campus Development</div>
+            <div class="timeline-desc">University develops the remediated site into the Franz River Campus, including the E.L. Wiegand Environmental Lab and boathouse. Riparian habitat begins passive ecological recovery. Native plant establishment ongoing.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">🐝</div>
+          <div class="timeline-content">
+            <div class="timeline-date">2026</div>
+            <div class="timeline-title">This Study</div>
+            <div class="timeline-desc">~12 years post-remediation. First systematic survey of native bumblebee presence and movement at the Franz River Campus riparian corridor. 8-station AprilTag tracking network deployed across both riparian and upper campus sites.</div>
+          </div>
+        </div>
+      </div>
+    {% endif %}</div>
+  </div>
+
+  <!-- RESEARCH QUESTION -->
+  <p class="section-label">Research question</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🔬 Core research questions</span>
+    </div>
+    <div class="card-body" data-editable="research_question_body">{% if data.get('research_question_body') %}{{ data['research_question_body'] | safe }}{% else %}
+      <div class="highlight-box">
+        <strong>Primary question:</strong> Have <em>Bombus vosnesenskii</em> workers colonized
+        the remediated Franz River Campus riparian corridor, and are they remaining within
+        that habitat or ranging to established green spaces on upper campus (SLUG garden)?
+      </div>
+
+      <p>This question is addressed through individual bee tracking at both sites simultaneously.
+      By tagging bees captured at the Franz River Campus (lower campus, river's edge) and
+      at the SLUG community garden (upper campus), we can determine:</p>
+
+      <div class="outcomes">
+        <div class="outcome outcome-green">
+          <div class="outcome-title">🌿 Site fidelity</div>
+          River bees stay at the river's edge — indicating the remediated habitat provides
+          sufficient floral resources to support resident foragers independently.
+          A positive restoration outcome.
+        </div>
+        <div class="outcome outcome-blue">
+          <div class="outcome-title">🔗 Habitat connectivity</div>
+          Bees move between both sites — indicating the riparian corridor and SLUG garden
+          function as a connected network. Even partial recovery integrates into the
+          broader urban pollinator landscape.
+        </div>
+        <div class="outcome outcome-amber">
+          <div class="outcome-title">📊 Asymmetric movement</div>
+          Movement is directional — e.g. river bees visit SLUG but not vice versa.
+          Reveals relative habitat quality differences and foraging range relative
+          to patch resource availability.
+        </div>
+      </div>
+
+      <p>A secondary question addresses whether the Franz River Campus riparian corridor
+      is supporting a self-sustaining <em>B. vosnesenskii</em> population 12 years after
+      active remediation, or whether bee presence is primarily driven by movement from
+      established upper campus habitats.</p>
+
+      <div class="info-box">
+        <strong>Why B. vosnesenskii:</strong> The yellow-faced bumblebee is a widespread
+        native generalist throughout the Pacific Northwest, making it an ideal indicator
+        species for habitat recovery assessment. Its foraging range, colony structure,
+        and sensitivity to habitat quality are well-documented, providing a strong
+        comparative baseline for interpreting movement data in a restoration context.
+      </div>
+    {% endif %}</div>
+  </div>
+
+  <!-- STUDY SITES -->
+  <p class="section-label">Study sites</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🗺️ Detection station layout</span>
+      <span class="pill">University of Portland campus</span>
+    </div>
+    <div class="card-body" data-editable="study_sites_body">{% if data.get('study_sites_body') %}{{ data['study_sites_body'] | safe }}{% else %}
+      <div class="site-grid">
+        <div class="site-box site-box-green">
+          <div class="site-box-label">Group 1 — Franz River Campus (lower)</div>
+          <div class="site-box-content">
+            Station A · Station B · Station C · Station D<br><br>
+            Remediated riparian corridor along the Willamette River.
+            Formerly contaminated with PCBs, heavy metals, and industrial
+            pollutants. Active soil remediation completed 2012–2014.
+            ~12 years of ecological recovery at time of study.
+          </div>
+        </div>
+        <div class="site-box site-box-blue">
+          <div class="site-box-label">Group 2 — SLUG Garden (upper campus)</div>
+          <div class="site-box-content">
+            Station E · Station F · Station G · Station H<br><br>
+            Student-run community garden with established native plantings,
+            vegetable beds, and pollinator-focused landscaping. Serves as
+            the established reference habitat for comparison with the
+            recovering riparian site.
+          </div>
+        </div>
+      </div>
+
+      <div class="placeholder-box">
+        <strong>📋 To be added:</strong> Native riparian plant species established at the
+        Franz River Campus during and after remediation. This list will document the
+        specific floral resources available to foraging bees at the remediated site
+        and strengthen the ecological link between habitat restoration and pollinator recovery.
+      </div>
+
+      <p>The two sites are separated by approximately 0.25 miles and 180 feet of
+      elevation change — a topographic gradient that adds ecological significance
+      to any confirmed inter-site movement, as bees navigating this corridor must
+      traverse both built campus infrastructure and significant elevation.</p>
+    {% endif %}</div>
+  </div>
+
+  <!-- METHODS -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🏷️ Tagging protocol</span>
+      </div>
+      <div class="card-body" data-editable="tagging_body">{% if data.get('tagging_body') %}{{ data['tagging_body'] | safe }}{% else %}
+        <p>Bees are captured by hand net at both sites during peak foraging hours.
+        Each bee is briefly chilled on an ice pack (~90 seconds) then fitted with
+        a unique AprilTag identifier attached to the dorsal thorax with
+        cyanoacrylate gel adhesive.</p>
+        <ul class="checklist">
+          <li>Capture site, date, time, and tag ID recorded in field manifest</li>
+          <li>Bee observed 5 minutes post-release</li>
+          <li>Up to 64 unique individual IDs per season</li>
+          <li>Posca paint dots used as backup visual identification</li>
+          <li>Tags persist 3–7 days under field conditions</li>
+        </ul>
+        <div class="info-box">
+          Tag weight is negligible relative to <em>B. vosnesenskii</em> worker mass
+          (~300–500mg). Studies confirm tags of this size do not significantly
+          affect bumblebee flight (Couvillon et al., 2012).
+        </div>
+      {% endif %}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📊 Automated detection</span>
+      </div>
+      <div class="card-body" data-editable="detection_body">{% if data.get('detection_body') %}{{ data['detection_body'] | safe }}{% else %}
+        <p>Each station runs continuous AprilTag detection during daylight hours.
+        When a tagged bee enters the camera field, the system automatically:</p>
+        <ul class="checklist">
+          <li>Reads the unique AprilTag ID via OpenCV ArUco3 detection</li>
+          <li>Logs tag ID, station, date, and timestamp to CSV</li>
+          <li>Saves a verification image of each detection event</li>
+          <li>Applies 10-second cooldown to prevent duplicate logging</li>
+        </ul>
+        <p style="margin-top:.75rem">Detection CSVs from all 8 stations sync automatically
+        to a shared Google Sheet each evening, providing real-time data access
+        for the full research team.</p>
+        <div class="highlight-box">
+          <strong>Cross-campus movement confirmed</strong> when the same tag ID
+          appears at both a Group 1 (river) and Group 2 (SLUG) station
+          within the same field season.
+        </div>
+      {% endif %}</div>
+    </div>
+  </div>
+
+  <!-- SIGNIFICANCE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🌍 Research significance</span>
+    </div>
+    <div class="card-body" data-editable="significance_body">{% if data.get('significance_body') %}{{ data['significance_body'] | safe }}{% else %}
+      <p>Documenting native pollinator recovery at a Superfund remediation site
+      addresses a significant gap in restoration ecology literature. While
+      vegetation recovery following contaminated site remediation is well-studied,
+      invertebrate and pollinator recolonization timelines are far less documented —
+      particularly in urban riparian environments.</p>
+
+      <p>The Franz River Campus setting is ecologically unusual: a remediated
+      industrial shoreline embedded within an active university campus, adjacent
+      to both the Willamette River and a productive student-managed food garden.
+      This configuration allows direct comparison of pollinator activity between
+      a recovering contaminated site and an established urban agricultural habitat
+      within the same landscape.</p>
+
+      <p>Findings from this study have direct relevance for:</p>
+      <ul class="checklist">
+        <li>EPA and regulatory assessment of biological recovery indicators at Superfund sites</li>
+        <li>Urban pollinator conservation planning in Portland and similar post-industrial cities</li>
+        <li>University sustainability and campus ecology programs</li>
+        <li>Restoration practitioners seeking native pollinator recolonization benchmarks</li>
+        <li>Future grant applications to USDA NIFA, NFWF, and EPA STAR programs</li>
+      </ul>
+
+      <div class="highlight-box">
+        <strong>Publication target:</strong> Findings will be submitted for peer-reviewed
+        publication in <em>Urban Ecosystems</em>, <em>Restoration Ecology</em>, or
+        <em>Journal of Applied Ecology</em>. Student researchers contributing
+        substantially to data collection and analysis will be considered for co-authorship.
+      </div>
+    {% endif %}</div>
+  </div>
+
+  <!-- TEAM -->
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header">
+      <span class="card-title">👥 Student research team</span>
+    </div>
+    <div class="card-body" data-editable="team_body">{% if data.get('team_body') %}{{ data['team_body'] | safe }}{% else %}
+      <p>This project is led by the University of Portland Biology Department and
+      is closely integrated with the SLUG (Student Land Use Group) community garden
+      program. Student workers from the Biology Department manage daily station
+      deployment, bee capture and tagging, data collection, and station maintenance
+      under faculty supervision.</p>
+      <p>Student involvement spans hardware assembly, ecological field protocols,
+      data management, and statistical analysis — providing genuine hands-on
+      experience in restoration ecology research methods, embedded systems, and
+      scientific computing. The project connects Biology, Environmental Science,
+      and the university's sustainability mission through a real-world research
+      problem with publication-quality outcomes.</p>
+    {% endif %}</div>
+  </div>
+
+  <!-- TECHNICAL APPENDIX (static — edit via Claude) -->
+  <hr class="divider">
+  <p class="section-label">Technical appendix</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">⚙️ Detection system specifications</span>
+      <span class="pill">for technical reviewers</span>
+    </div>
+    <div class="card-body">
+
+      <div class="appendix-section">
+        <div class="appendix-heading">Hardware — per station (8 total)</div>
+        <table class="spec-table">
+          <tr><td>Compute</td><td>Raspberry Pi 5 1GB · BCM2712 quad-core 2.4GHz</td></tr>
+          <tr><td>Camera</td><td>Waveshare IMX219 · 8MP Sony sensor · 120° FOV · MIPI-CSI</td></tr>
+          <tr><td>Resolution</td><td>3280 × 2464 full sensor · continuous video capture</td></tr>
+          <tr><td>Storage</td><td>Samsung PRO Endurance 64GB MicroSD · endurance-rated</td></tr>
+          <tr><td>Power</td><td>Anker PowerCore 10K · ~6hr field runtime · USB LED keep-alive</td></tr>
+          <tr><td>Enclosure</td><td>IP65 hinged weatherproof box · PATIKIL 15.7" gooseneck arm</td></tr>
+          <tr><td>Mount</td><td>PVC pipe stake · 1/4"-20 brass heat-set insert in box lid</td></tr>
+          <tr><td>Network</td><td>UPIoT MAC-registered · Pi Connect remote terminal access</td></tr>
+        </table>
+      </div>
+
+      <div class="appendix-section">
+        <div class="appendix-heading">Software stack</div>
+        <table class="spec-table">
+          <tr><td>OS</td><td>Raspberry Pi OS Lite 64-bit · Bookworm · headless</td></tr>
+          <tr><td>Detection</td><td>OpenCV-contrib 4.13.0 · <code>DICT_APRILTAG_36h11</code> · ArUco3</td></tr>
+          <tr><td>Camera</td><td>picamera2 · libcamera v0.7.1</td></tr>
+          <tr><td>Data sync</td><td>gspread + google-auth · Google Sheets API v4</td></tr>
+          <tr><td>Auto-start</td><td>crontab <code>@reboot</code> · 20s delay · daily sync <code>0 20 * * *</code></td></tr>
+          <tr><td>Source code</td><td>github.com/bedell-up/beetracking</td></tr>
+        </table>
+      </div>
+
+      <div class="appendix-section">
+        <div class="appendix-heading">Tag detection parameters</div>
+        <table class="spec-table">
+          <tr><td>Tag family</td><td>AprilTag 36h11 · 587 unique IDs · strong error correction</td></tr>
+          <tr><td>Printed size</td><td>10–12mm · minimum reliable size for <em>B. vosnesenskii</em> thorax</td></tr>
+          <tr><td>Detection height</td><td>10–15cm · tag appears ~60px in 3280px-wide frame</td></tr>
+          <tr><td>Detection mode</td><td>ArUco3 · <code>minSideLengthCanonicalImg = 32</code></td></tr>
+          <tr><td>Error correction</td><td><code>errorCorrectionRate = 1.0</code> · maximum tolerance</td></tr>
+          <tr><td>Cooldown</td><td>10 seconds per tag ID · prevents duplicate logging</td></tr>
+        </table>
+      </div>
+
+      <div class="appendix-section">
+        <div class="appendix-heading">References</div>
+        <div data-editable="references">{% if data.get('references') %}{{ data['references'] | safe }}{% else %}
+        <p style="font-size:12px;color:var(--muted);line-height:1.9">
+          Couvillon, M.J., et al. (2012). Effect of weight on flight performance of bumblebees. <em>Journal of Apicultural Research.</em><br>
+          Olson, E., et al. (2011). AprilTag: A robust and flexible visual fiducial system. <em>Proceedings of ICRA 2011.</em><br>
+          U.S. Environmental Protection Agency. (2000). Portland Harbor Superfund Site designation. EPA Region 10.<br>
+          University of Portland Facilities Planning. Franz River Campus remediation documentation. ww1.up.edu/facilitiesplanning/river-campus.html
+        </p>
+        {% endif %}</div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="footer">University of Portland · SURE 2026 Research · Franz River Campus Pollinator Study · bedell@up.edu · Last updated June 2026</p>
+
+</div>
+
+<script>
+let _savedHTML = {};
+
+function enterEditMode() {
+  _savedHTML = {};
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    _savedHTML[el.dataset.editable] = el.innerHTML;
+    el.contentEditable = 'true';
+  });
+  document.getElementById('edit-btn').textContent = '💾 Save Changes';
+  document.getElementById('edit-btn').onclick = saveChanges;
+  document.getElementById('cancel-btn').style.display = '';
+  document.getElementById('edit-banner').classList.add('show');
+}
+
+function cancelEdit() {
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    if (_savedHTML[el.dataset.editable] !== undefined) {
+      el.innerHTML = _savedHTML[el.dataset.editable];
+    }
+    el.contentEditable = 'false';
+  });
+  exitEditMode();
+}
+
+function saveChanges() {
+  const payload = {};
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    payload[el.dataset.editable] = el.innerHTML.trim();
+  });
+  fetch('/api/overview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(() => {
+    document.querySelectorAll('[data-editable]').forEach(el => {
+      el.contentEditable = 'false';
+    });
+    exitEditMode();
+    const msg = document.getElementById('saved-msg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2500);
+  })
+  .catch(() => alert('Save failed — please try again.'));
+}
+
+function exitEditMode() {
+  document.getElementById('edit-btn').textContent = '✏️ Edit Page';
+  document.getElementById('edit-btn').onclick = enterEditMode;
+  document.getElementById('cancel-btn').style.display = 'none';
+  document.getElementById('edit-banner').classList.remove('show');
+}
+</script>
+</body>
+</html>

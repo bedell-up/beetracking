@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bombus vosnesenskii — Parts List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:       #1a1f2e;
+  --navy-light: #252b3b;
+  --green:      #22c55e;
+  --green-bg:   #f0fdf4;
+  --green-dim:  #16a34a;
+  --blue:       #3b82f6;
+  --bg:         #f1f5f9;
+  --white:      #ffffff;
+  --text:       #1f2937;
+  --muted:      #6b7280;
+  --border:     #e5e7eb;
+  --shadow:     0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --font:       'Inter', system-ui, sans-serif;
+  --mono:       'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--navy);
+  padding: .75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.bee-icon { font-size: 28px; }
+
+.header-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+
+.header-sub {
+  font-size: 12px;
+  color: var(--green);
+  margin-top: 1px;
+}
+
+/* ── NAV ── */
+.nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  gap: 0;
+}
+
+.nav a {
+  display: inline-block;
+  padding: .75rem 1rem;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s;
+}
+
+.nav a:hover { color: var(--text); }
+.nav a.active { color: var(--text); border-bottom-color: var(--green); }
+
+/* ── PAGE ── */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.page-eyebrow {
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .4rem;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .25rem;
+}
+
+.page-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 1.75rem;
+}
+
+/* ── STAT CARDS ── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 800px) { .stats { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .stats { grid-template-columns: 1fr; } }
+
+.stat-card {
+  background: var(--white);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.stat-card.highlight {
+  background: var(--green-bg);
+  border-color: var(--green);
+}
+
+.stat-emoji { font-size: 32px; margin-bottom: .5rem; display: block; }
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 600;
+  font-family: var(--mono);
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.stat-card.highlight .stat-value { color: var(--green-dim); }
+
+.stat-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: .35rem;
+}
+
+/* ── SECTION CARD ── */
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: var(--bg);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.pill-green { background: var(--green-bg); color: var(--green-dim); border-color: #bbf7d0; }
+.pill-blue  { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+
+/* ── TABLE ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead tr { background: #f9fafb; }
+
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+th.r { text-align: right; }
+
+td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #f9fafb; }
+
+td.r {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.part-name {
+  font-weight: 500;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.part-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+.vendor-name {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.badge-free    { background: var(--green-bg); color: var(--green-dim); border: 1px solid #bbf7d0; }
+.badge-owned   { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.badge-printed { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+.subtotal-row td {
+  background: #f9fafb;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.subtotal-row td.r {
+  color: var(--green-dim);
+  font-family: var(--mono);
+}
+
+/* ── GRAND TOTAL ── */
+.grand-card {
+  background: var(--green-bg);
+  border: 1px solid var(--green);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.grand-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.grand-note {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.grand-value {
+  font-size: 32px;
+  font-weight: 600;
+  font-family: var(--mono);
+  color: var(--green-dim);
+  white-space: nowrap;
+  margin-left: 2rem;
+}
+
+/* ── INFO BOX ── */
+.info-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-top: 1.25rem;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.info-box strong { color: var(--text); font-weight: 500; }
+
+/* ── FOOTER ── */
+.footer {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ── BUDGET OVERLAY ── */
+.budget-bar {
+  background: var(--navy-light);
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.budget-bar-cells { display: flex; gap: 2rem; flex-wrap: wrap; }
+.budget-cell { text-align: center; }
+.budget-cell-label { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #9ca3af; margin-bottom: 2px; }
+.budget-cell-value { font-size: 22px; font-weight: 600; font-family: var(--mono); color: #fff; }
+.budget-cell-value.actual { color: var(--green); }
+.budget-cell-value.over  { color: #f87171; }
+.budget-cell-value.under { color: #34d399; }
+.budget-bar-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green-dim); color: #fff;
+  text-decoration: none; border-radius: 6px;
+  padding: 7px 14px; font-size: 12px; font-weight: 600;
+  white-space: nowrap;
+}
+.budget-bar-link:hover { background: #15803d; }
+
+td.act  { text-align: right; font-family: var(--mono); font-size: 12px; white-space: nowrap; color: var(--green-dim); }
+td.var  { text-align: right; font-family: var(--mono); font-size: 11px; white-space: nowrap; }
+.var-over  { color: #dc2626; }
+.var-under { color: #16a34a; }
+.var-zero  { color: var(--muted); }
+th.act, th.var { text-align: right; }
+.pending { color: #d1d5db; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <span class="bee-icon">🐝</span>
+    <div>
+      <div class="header-title">Bombus vosnesenskii Tracking</div>
+      <div class="header-sub">AprilTag Detection Dashboard · University of Portland · PI: Dr. Tara Prestholdt · Summer 2026</div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/">Dashboard</a>
+  <a href="#" class="active">Project Pages</a>
+  <a href="/budget">Budget &amp; Expenses</a>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <p class="page-eyebrow">Project Documentation</p>
+  <h1 class="page-title">Hardware &amp; Software Parts List</h1>
+  <p class="page-sub">8-station AprilTag tracking build · Bombus vosnesenskii pollinator research · University of Portland</p>
+
+  <!-- BUDGET BAR -->
+  <div class="budget-bar" id="budget-bar" style="display:none">
+    <div class="budget-bar-cells">
+      <div class="budget-cell">
+        <div class="budget-cell-label">Estimated</div>
+        <div class="budget-cell-value" id="b-est">—</div>
+      </div>
+      <div class="budget-cell">
+        <div class="budget-cell-label">Actual (so far)</div>
+        <div class="budget-cell-value actual" id="b-act">—</div>
+      </div>
+      <div class="budget-cell">
+        <div class="budget-cell-label">Variance</div>
+        <div class="budget-cell-value" id="b-var">—</div>
+      </div>
+      <div class="budget-cell">
+        <div class="budget-cell-label">Pending</div>
+        <div class="budget-cell-value" id="b-pend">—</div>
+      </div>
+    </div>
+    <a href="/budget" class="budget-bar-link">✏ Edit Expenses ↗</a>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats">
+    <div class="stat-card">
+      <span class="stat-emoji">📡</span>
+      <div class="stat-value">8</div>
+      <div class="stat-label">Detection stations</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-emoji">💰</span>
+      <div class="stat-value">$110</div>
+      <div class="stat-label">Estimated cost per station</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-emoji">🏷️</span>
+      <div class="stat-value">~$950</div>
+      <div class="stat-label">Total estimated build cost</div>
+    </div>
+    <div class="stat-card highlight" id="actual-card">
+      <span class="stat-emoji">✅</span>
+      <div class="stat-value" id="actual-card-value">—</div>
+      <div class="stat-label" id="actual-card-label">Actual spent</div>
+    </div>
+  </div>
+
+  <!-- CORE ELECTRONICS -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Core electronics</span>
+      <span class="pill">per station × 8</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="width:28%">Component</th>
+        <th style="width:6%">Qty</th>
+        <th style="width:10%" class="r">Unit cost</th>
+        <th style="width:10%" class="r">Est. total</th>
+        <th class="act">Actual</th>
+        <th class="var">Variance</th>
+        <th style="width:11%">Vendor</th>
+        <th style="width:14%">Notes</th>
+      </tr></thead>
+      <tbody>
+        <tr data-bid="rpi5">
+          <td><div class="part-name">Raspberry Pi 5 1GB</div><div class="part-note">BCM2712 quad-core 2.4GHz · 1GB LPDDR4X RAM · Pi 5 required for full-resolution OpenCV</div></td>
+          <td>1</td><td class="r">$45.00</td><td class="r">$360.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">PiShop</span></td>
+          <td><span class="vendor-name">pishop.us</span></td>
+        </tr>
+        <tr data-bid="camera">
+          <td><div class="part-name">Waveshare IMX219 120° FOV Camera</div><div class="part-note">8MP Sony IMX219 · MIPI-CSI · 120° wide angle · includes 200mm Pi 5 cable</div></td>
+          <td>1</td><td class="r">$18.95</td><td class="r">$151.60</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">PiShop</span></td>
+          <td><span class="vendor-name">Pi5-IMX219-120</span></td>
+        </tr>
+        <tr data-bid="camera-cable">
+          <td><div class="part-name">Pi 5 camera cable 500mm</div><div class="part-note">22-pin to 15-pin FPC · required for gooseneck reach from enclosure to camera</div></td>
+          <td>1</td><td class="r">$3.95</td><td class="r">$31.60</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">PiShop</span></td>
+          <td><span class="vendor-name">300mm also available</span></td>
+        </tr>
+        <tr data-bid="active-cooler">
+          <td><div class="part-name">Raspberry Pi Active Cooler</div><div class="part-note">PWM-controlled fan + heatsink · clip-on Pi 5 mount · required in sealed enclosure</div></td>
+          <td>1</td><td class="r">$5.00</td><td class="r">$40.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">B0CZLPX2HC</span></td>
+        </tr>
+        <tr data-bid="microsd">
+          <td><div class="part-name">Samsung PRO Endurance 64GB MicroSD</div><div class="part-note">100MB/s U1 · rated for continuous video write · endurance-rated essential</div></td>
+          <td>1</td><td class="r">$14.99</td><td class="r">$119.92</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">NWCA</span></td>
+          <td><span class="vendor-name">nwca.com</span></td>
+        </tr>
+        <tr class="subtotal-row" data-cat="core-electronics">
+          <td colspan="3">Core electronics subtotal</td>
+          <td class="r">$703.12</td>
+          <td class="act cat-act">—</td><td class="var cat-var">—</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- POWER -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Power</span>
+      <span class="pill">per station × 8</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="width:28%">Component</th>
+        <th style="width:6%">Qty</th>
+        <th style="width:10%" class="r">Unit cost</th>
+        <th style="width:10%" class="r">Est. total</th>
+        <th class="act">Actual</th>
+        <th class="var">Variance</th>
+        <th style="width:11%">Vendor</th>
+        <th style="width:14%">Notes</th>
+      </tr></thead>
+      <tbody>
+        <tr data-bid="power-bank">
+          <td><div class="part-name">Anker PowerCore 10K <span class="badge badge-owned">owned</span></div><div class="part-note">10,000mAh · 5V/3A USB-A output · ~6hr runtime at Pi 5 load</div></td>
+          <td>1</td><td class="r">$0</td><td class="r">$0</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">On hand</span></td>
+          <td><span class="vendor-name">Model A1229</span></td>
+        </tr>
+        <tr data-bid="usb-led">
+          <td><div class="part-name">USB LED keep-alive</div><div class="part-note">0.1W · 20mA constant draw · prevents power bank auto-shutoff</div></td>
+          <td>1</td><td class="r">$1.75</td><td class="r">$14.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">$6.99 / 4-pack</span></td>
+        </tr>
+        <tr data-bid="usb-cable">
+          <td><div class="part-name">USB-A to USB-C cable (30cm)</div><div class="part-note">Power bank to Pi 5 inside enclosure</div></td>
+          <td>1</td><td class="r">$1.00</td><td class="r">$8.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">10-pack ~$8</span></td>
+        </tr>
+        <tr class="subtotal-row" data-cat="power">
+          <td colspan="3">Power subtotal</td>
+          <td class="r">$22.00</td>
+          <td class="act cat-act">—</td><td class="var cat-var">—</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ENCLOSURE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Enclosure &amp; mounting</span>
+      <span class="pill">per station × 8</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="width:28%">Component</th>
+        <th style="width:6%">Qty</th>
+        <th style="width:10%" class="r">Unit cost</th>
+        <th style="width:10%" class="r">Est. total</th>
+        <th class="act">Actual</th>
+        <th class="var">Variance</th>
+        <th style="width:11%">Vendor</th>
+        <th style="width:14%">Notes</th>
+      </tr></thead>
+      <tbody>
+        <tr data-bid="enclosure-box">
+          <td><div class="part-name">IP65 hinged weatherproof box</div><div class="part-note">Easy-open hinged lid for daily SD card access · includes cable glands &amp; wall brackets</div></td>
+          <td>1</td><td class="r">$15.00</td><td class="r">$120.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">B0CNQMSMD3</span></td>
+        </tr>
+        <tr data-bid="gooseneck">
+          <td><div class="part-name">PATIKIL gooseneck arm 15.7"</div><div class="part-note">1/4"-20 male base screws into lid insert · camera mounts at top · metal construction</div></td>
+          <td>1</td><td class="r">$3.50</td><td class="r">$28.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">B0FJRJ6ZRC · 4-pack</span></td>
+        </tr>
+        <tr data-bid="heat-insert">
+          <td><div class="part-name">Ruthex 1/4"-20 brass heat-set insert</div><div class="part-note">6.4mm OD × 8mm · camera thread standard · press into box lid with soldering iron</div></td>
+          <td>1</td><td class="r">$0.50</td><td class="r">$4.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">B0F2ZBN1K9 · 20-pack</span></td>
+        </tr>
+        <tr data-bid="pvc-stake">
+          <td><div class="part-name">PVC pipe stake <span class="badge badge-owned">on hand</span></div><div class="part-note">3/4" or 1" schedule 40 · cut to ~4ft · angled point for ground insertion</div></td>
+          <td>1</td><td class="r">$0</td><td class="r">$0</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">On hand</span></td>
+          <td><span class="vendor-name">From existing stock</span></td>
+        </tr>
+        <tr data-bid="silicone-tape">
+          <td><div class="part-name">Self-amalgamating silicone tape</div><div class="part-note">Wraps ribbon cable at cable gland for watertight seal</div></td>
+          <td>—</td><td class="r">$0.63</td><td class="r">$5.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">1 roll shared across 8</span></td>
+        </tr>
+        <tr class="subtotal-row" data-cat="enclosure">
+          <td colspan="3">Enclosure &amp; mounting subtotal</td>
+          <td class="r">$157.00</td>
+          <td class="act cat-act">—</td><td class="var cat-var">—</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3D PRINTED -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">3D printed parts</span>
+      <span class="pill pill-blue">Creality K2 Pro · PETG black · 0.15mm</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="width:28%">Part</th>
+        <th style="width:6%">Qty</th>
+        <th style="width:10%" class="r">Filament</th>
+        <th style="width:10%" class="r">Est. total</th>
+        <th class="act">Actual</th>
+        <th class="var">Variance</th>
+        <th style="width:11%">File</th>
+        <th style="width:14%">Notes</th>
+      </tr></thead>
+      <tbody>
+        <tr data-bid="housing-back">
+          <td><div class="part-name">Camera housing — back shell <span class="badge badge-free">free</span></div><div class="part-note">PCB mount bosses · 1/4"-20 insert socket · ribbon cable exit slot</div></td>
+          <td>1</td><td class="r">~4g</td><td class="r">$0</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">camera_housing_back.stl</span></td>
+          <td><span class="vendor-name">40% infill · no supports</span></td>
+        </tr>
+        <tr data-bid="housing-front">
+          <td><div class="part-name">Camera housing — front cover <span class="badge badge-free">free</span></div><div class="part-note">Snap-fit over back shell · lens aperture · rain-shedding overlap lip</div></td>
+          <td>1</td><td class="r">~3g</td><td class="r">$0</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">camera_housing_front.stl</span></td>
+          <td><span class="vendor-name">40% infill · no supports</span></td>
+        </tr>
+        <tr data-bid="ir-holder">
+          <td><div class="part-name">IR cut filter holder <span class="badge badge-free">free</span></div><div class="part-note">Friction-fit cap over lens · holds 6.5mm 650nm IR cut filter disc</div></td>
+          <td>1</td><td class="r">~1g</td><td class="r">$0</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">ir_filter_holder.stl</span></td>
+          <td><span class="vendor-name">0.1mm · spare for color tracking</span></td>
+        </tr>
+        <tr class="subtotal-row" data-cat="printed">
+          <td colspan="3">3D printed subtotal</td>
+          <td class="r">$0</td>
+          <td class="act cat-act">—</td><td class="var cat-var">—</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CONSUMABLES -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Field consumables</span>
+      <span class="pill">one-time purchase</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="width:28%">Item</th>
+        <th style="width:6%">Qty</th>
+        <th style="width:10%" class="r">Unit cost</th>
+        <th style="width:10%" class="r">Est. total</th>
+        <th class="act">Actual</th>
+        <th class="var">Variance</th>
+        <th style="width:11%">Vendor</th>
+        <th style="width:14%">Purpose</th>
+      </tr></thead>
+      <tbody>
+        <tr data-bid="superglue">
+          <td><div class="part-name">Superglue gel (Loctite)</div></td>
+          <td>4 tubes</td><td class="r">$4.00</td><td class="r">$16.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Hardware store</span></td>
+          <td><span class="vendor-name">AprilTag attachment to thorax</span></td>
+        </tr>
+        <tr data-bid="posca-pens">
+          <td><div class="part-name">Posca paint pens (4-color set)</div></td>
+          <td>2 sets</td><td class="r">$12.00</td><td class="r">$24.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Art store / Amazon</span></td>
+          <td><span class="vendor-name">Backup visual ID system</span></td>
+        </tr>
+        <tr data-bid="ir-filter">
+          <td><div class="part-name">6.5mm 650nm IR cut filter glass (2-pack)</div></td>
+          <td>4 packs</td><td class="r">$7.00</td><td class="r">$28.00</td>
+          <td class="act bid-act">—</td><td class="var bid-var">—</td>
+          <td><span class="vendor-name">Amazon</span></td>
+          <td><span class="vendor-name">Future color tracking upgrade</span></td>
+        </tr>
+        <tr class="subtotal-row" data-cat="consumables">
+          <td colspan="3">Consumables subtotal</td>
+          <td class="r">$68.00</td>
+          <td class="act cat-act">—</td><td class="var cat-var">—</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SOFTWARE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Software stack</span>
+      <span class="pill pill-green">all free / open source</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="width:26%">Package</th>
+        <th style="width:14%">Version</th>
+        <th style="width:34%">Purpose</th>
+        <th style="width:10%" class="r">Est.</th>
+        <th style="width:8%" class="r">Actual</th>
+        <th style="width:8%" class="r">Variance</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><div class="part-name">Raspberry Pi OS Lite 64-bit</div></td><td><span class="vendor-name">Bookworm · Apr 2026</span></td><td><span class="vendor-name">Headless base OS for all 8 stations</span></td><td class="r"><span class="badge badge-free">free</span></td><td></td><td></td></tr>
+        <tr><td><div class="part-name">OpenCV-contrib-python</div></td><td><span class="vendor-name">4.13.0</span></td><td><span class="vendor-name">AprilTag 36h11 detection · ArUco3 mode for small tags</span></td><td class="r"><span class="badge badge-free">free</span></td><td></td><td></td></tr>
+        <tr><td><div class="part-name">picamera2</div></td><td><span class="vendor-name">latest</span></td><td><span class="vendor-name">Pi 5 camera interface · 3280×2464 full resolution</span></td><td class="r"><span class="badge badge-free">free</span></td><td></td><td></td></tr>
+        <tr><td><div class="part-name">gspread + google-auth</div></td><td><span class="vendor-name">latest</span></td><td><span class="vendor-name">Daily automated sync to shared Google Sheet</span></td><td class="r"><span class="badge badge-free">free</span></td><td></td><td></td></tr>
+        <tr><td><div class="part-name">numpy · pandas</div></td><td><span class="vendor-name">latest</span></td><td><span class="vendor-name">Detection data processing and analysis</span></td><td class="r"><span class="badge badge-free">free</span></td><td></td><td></td></tr>
+        <tr><td><div class="part-name">beetracking (custom)</div></td><td><span class="vendor-name">github.com/bedell-up</span></td><td><span class="vendor-name">detect.py · sync_to_sheets.py · analyze.py</span></td><td class="r"><span class="badge badge-free">free</span></td><td></td><td></td></tr>
+        <tr><td><div class="part-name">Google Sheets API v4</div></td><td><span class="vendor-name">—</span></td><td><span class="vendor-name">Shared research data dashboard for team</span></td><td class="r"><span class="badge badge-free">free</span></td><td></td><td></td></tr>
+        <tr data-bid="pi-connect"><td><div class="part-name">Pi Connect (rpi-connect)</div><div class="part-note">$0.50/station/month · 8 stations × 2 months</div></td><td><span class="vendor-name">latest</span></td><td><span class="vendor-name">Remote station terminal access via browser</span></td><td class="r bid-est">$8.00</td><td class="act bid-act">—</td><td class="var bid-var">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRAND TOTAL -->
+  <div class="grand-card">
+    <div>
+      <div class="grand-label">Estimated total build cost · 8 stations</div>
+      <div class="grand-note">Excludes owned power banks (~$160 retail) · PVC pipe (on hand) · 3D printed parts (filament only)</div>
+    </div>
+    <div class="grand-value">~$950</div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div class="info-box">
+    <strong>Tag specifications:</strong> AprilTag 36h11 dictionary · 10–12mm printed size · detected at ~60px in 3280×2464 frame using ArUco3 mode · attached to dorsal thorax with superglue gel · individual bee IDs tracked across all 8 stations.<br><br>
+    <strong>Network:</strong> All 8 stations registered on UP IoT network (UPIoT) by MAC address · no credentials required · remote access via Pi Connect · automated CSV sync to shared Google Sheet at 8:00pm daily via cron.
+  </div>
+
+  <p class="footer">University of Portland · SURE 2026 Research · bedell@up.edu · Last updated June 2026</p>
+
+</div>
+<script>
+(async () => {
+  let data;
+  try { data = await (await fetch('/api/budget')).json(); }
+  catch { return; }
+
+  // Build item map and category map
+  const items = {};
+  const cats = {};
+  for (const cat of data.categories) {
+    let catEst = 0, catAct = 0, catPend = false;
+    for (const item of cat.items) {
+      items[item.id] = item;
+      catEst += item.estimated_total || 0;
+      if (item.actual_total !== null) catAct += item.actual_total;
+      else catPend = true;
+    }
+    cats[cat.id] = { est: catEst, act: catAct, pending: catPend };
+  }
+
+  // Totals
+  let totalEst = 0, totalAct = 0, totalPend = 0;
+  for (const cat of data.categories) {
+    for (const item of cat.items) {
+      totalEst += item.estimated_total || 0;
+      if (item.actual_total !== null) totalAct += item.actual_total;
+      else totalPend += item.estimated_total || 0;
+    }
+  }
+
+  function fmt(n) { return '$' + n.toFixed(2); }
+  function fmtVar(v) {
+    if (v === 0) return '<span class="var-zero">—</span>';
+    const sign = v > 0 ? '+' : '';
+    const cls = v > 0 ? 'var-over' : 'var-under';
+    return `<span class="${cls}">${sign}${fmt(v)}</span>`;
+  }
+
+  function fmtU(n) { return n == null ? '' : '$' + Number(n).toFixed(4).replace(/\.?0+$/, ''); }
+
+  // Fill item rows
+  document.querySelectorAll('[data-bid]').forEach(row => {
+    const item = items[row.dataset.bid];
+    if (!item) return;
+    const actCell = row.querySelector('.bid-act');
+    const varCell = row.querySelector('.bid-var');
+    if (!actCell || !varCell) return;
+    if (item.actual_total !== null) {
+      const unitPart = item.actual_unit != null ? `<span style="color:#9ca3af;font-size:10px">${fmtU(item.actual_unit)}/ea · </span>` : '';
+      actCell.innerHTML = unitPart + fmt(item.actual_total);
+      varCell.innerHTML = fmtVar(item.actual_total - item.estimated_total);
+    } else {
+      actCell.innerHTML = '<span class="pending">pending</span>';
+      varCell.innerHTML = '<span class="pending">—</span>';
+    }
+  });
+
+  // Fill category subtotal rows
+  document.querySelectorAll('[data-cat]').forEach(row => {
+    const cat = cats[row.dataset.cat];
+    if (!cat) return;
+    const actCell = row.querySelector('.cat-act');
+    const varCell = row.querySelector('.cat-var');
+    if (!actCell || !varCell) return;
+    if (!cat.pending) {
+      actCell.textContent = fmt(cat.act);
+      varCell.innerHTML = fmtVar(cat.act - cat.est);
+    } else {
+      actCell.innerHTML = `${fmt(cat.act)} <span class="pending">+pending</span>`;
+      varCell.innerHTML = '<span class="pending">partial</span>';
+    }
+  });
+
+  // Populate actual stat card
+  const cardVal = document.getElementById('actual-card-value');
+  const cardLbl = document.getElementById('actual-card-label');
+  cardVal.textContent = fmt(totalAct);
+  if (totalPend > 0) {
+    const variance = totalAct - (totalEst - totalPend);
+    const sign = variance >= 0 ? '+' : '';
+    cardLbl.textContent = `Actual spent · ${fmt(totalPend)} pending`;
+    cardVal.title = `Variance on tracked items: ${sign}${fmt(variance)}`;
+  } else {
+    const variance = totalAct - totalEst;
+    const sign = variance >= 0 ? '+' : '';
+    cardLbl.textContent = `Actual spent · ${sign}${fmt(variance)} vs est.`;
+  }
+
+  // Show and populate budget bar
+  const bar = document.getElementById('budget-bar');
+  bar.style.display = '';
+  document.getElementById('b-est').textContent = fmt(totalEst);
+  document.getElementById('b-act').textContent = fmt(totalAct);
+  const varEl = document.getElementById('b-var');
+  varEl.innerHTML = fmtVar(totalAct - (totalEst - totalPend));
+  varEl.className = 'budget-cell-value ' + ((totalAct > (totalEst - totalPend)) ? 'over' : 'under');
+  document.getElementById('b-pend').textContent = fmt(totalPend);
+})();
+</script>
+</body>
+</html>
