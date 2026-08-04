@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget &amp; Expenses — BeeTracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:      #1a1f2e;
+  --navy-l:    #252b3b;
+  --green:     #22c55e;
+  --green-bg:  #f0fdf4;
+  --green-dim: #16a34a;
+  --blue:      #3b82f6;
+  --red:       #dc2626;
+  --bg:        #f1f5f9;
+  --white:     #ffffff;
+  --text:      #1f2937;
+  --muted:     #6b7280;
+  --border:    #e5e7eb;
+  --shadow:    0 1px 3px rgba(0,0,0,.08);
+  --mono:      'JetBrains Mono', monospace;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.5; min-height: 100vh; }
+
+/* header */
+.hdr { background: var(--navy); padding: .75rem 2rem; display: flex; align-items: center; gap: .75rem; }
+.hdr-title { font-size: 17px; font-weight: 600; color: #fff; }
+.hdr-sub { font-size: 12px; color: var(--green); margin-top: 1px; }
+
+/* nav */
+.nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; }
+.nav a { display: inline-block; padding: .75rem 1rem; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.nav a:hover { color: var(--text); }
+.nav a.active { color: var(--text); border-bottom-color: var(--green); }
+
+/* page */
+.page { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.page-title { font-size: 22px; font-weight: 600; margin-bottom: .25rem; }
+.page-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.75rem; }
+
+/* summary cards */
+.summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 1.75rem; }
+@media(max-width:700px){ .summary { grid-template-columns: 1fr 1fr; } }
+.sum-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; box-shadow: var(--shadow); }
+.sum-card.highlight { background: var(--green-bg); border-color: var(--green); }
+.sum-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.sum-value { font-size: 26px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+.sum-card.highlight .sum-value { color: var(--green-dim); }
+.sum-value.over  { color: var(--red); }
+.sum-value.under { color: var(--green-dim); }
+
+/* save indicator */
+.save-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+.save-msg { font-size: 13px; color: var(--green-dim); font-weight: 500; opacity: 0; transition: opacity .3s; }
+.save-msg.visible { opacity: 1; }
+
+/* category section */
+.cat-section { background: var(--white); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); margin-bottom: 1.25rem; overflow: hidden; }
+.cat-header { display: flex; align-items: center; justify-content: space-between; padding: .85rem 1.25rem; border-bottom: 1px solid var(--border); background: #f9fafb; }
+.cat-title { font-size: 14px; font-weight: 600; }
+.cat-note { font-size: 11px; color: var(--muted); }
+.cat-actions { display: flex; align-items: center; gap: 8px; }
+
+/* table */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 7px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th.r { text-align: right; }
+td { padding: 9px 12px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #fafafa; }
+.item-name { font-weight: 500; }
+.item-note { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.vendor-txt { font-size: 12px; color: var(--muted); }
+td.mono { font-family: var(--mono); font-size: 12px; text-align: right; white-space: nowrap; }
+.est-val { color: var(--muted); }
+
+/* actual input */
+.actual-wrap { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
+.actual-wrap .pfx { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+input.actual-input {
+  width: 80px; text-align: right; border: 1px solid var(--border); border-radius: 5px;
+  padding: 4px 7px; font-family: var(--mono); font-size: 12px; color: var(--text);
+  background: var(--bg); outline: none; transition: border .15s;
+}
+input.actual-input:focus { border-color: var(--green); background: var(--white); }
+input.actual-input.has-value { background: var(--green-bg); border-color: #bbf7d0; color: var(--green-dim); }
+
+/* variance */
+.var-cell { font-family: var(--mono); font-size: 12px; text-align: right; white-space: nowrap; }
+.over  { color: var(--red); }
+.under { color: var(--green-dim); }
+.muted { color: var(--muted); }
+
+/* subtotal row */
+.subtotal td { background: #f9fafb; font-size: 12px; font-weight: 600; color: var(--muted); border-top: 1px solid var(--border); }
+.subtotal td.mono { color: var(--text); }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; gap: 5px; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: background .15s; }
+.btn-green { background: var(--green-dim); color: #fff; }
+.btn-green:hover { background: #15803d; }
+.btn-ghost { background: none; border: 1px solid var(--border); color: var(--muted); }
+.btn-ghost:hover { background: var(--bg); color: var(--text); }
+.btn-del { background: none; border: none; color: #d1d5db; cursor: pointer; padding: 3px 6px; border-radius: 4px; font-size: 14px; line-height: 1; }
+.btn-del:hover { background: #fee2e2; color: var(--red); }
+
+/* add-item form */
+.add-form { display: none; padding: 12px 16px; border-top: 1px solid var(--border); background: #f9fafb; }
+.add-form.open { display: block; }
+.add-form-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto; gap: 8px; align-items: end; }
+@media(max-width:800px){ .add-form-grid { grid-template-columns: 1fr 1fr; } }
+.add-field label { display: block; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+.add-field input, .add-field select {
+  width: 100%; border: 1px solid var(--border); border-radius: 5px;
+  padding: 5px 8px; font-size: 12px; font-family: inherit; background: var(--white); outline: none;
+}
+.add-field input:focus, .add-field select:focus { border-color: var(--green); }
+.add-actions { display: flex; gap: 6px; padding-top: 16px; }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <span style="font-size:26px">🐝</span>
+  <div>
+    <div class="hdr-title">Bombus vosnesenskii Tracking</div>
+    <div class="hdr-sub">AprilTag Detection Dashboard · University of Portland · PI: Dr. Tara Prestholdt · Summer 2026</div>
+  </div>
+</header>
+
+<nav class="nav">
+  <a href="/">Dashboard</a>
+  <a href="/parts">Project Pages</a>
+  <a href="/budget" class="active">Budget &amp; Expenses</a>
+</nav>
+
+<div class="page">
+  <h1 class="page-title">Budget &amp; Expenses</h1>
+  <p class="page-sub">Track estimated vs. actual costs. Click any Actual field to edit — changes save automatically on blur.</p>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="sum-card"><div class="sum-label">Estimated Total</div><div class="sum-value" id="s-est">—</div></div>
+    <div class="sum-card highlight"><div class="sum-label">Actual Spent</div><div class="sum-value" id="s-act">—</div></div>
+    <div class="sum-card"><div class="sum-label">Variance</div><div class="sum-value" id="s-var">—</div></div>
+    <div class="sum-card"><div class="sum-label">Still Pending</div><div class="sum-value" id="s-pend">—</div></div>
+  </div>
+
+  <div class="save-bar">
+    <span class="save-msg" id="save-msg">✓ Saved</span>
+  </div>
+
+  <!-- Category sections injected here -->
+  <div id="categories"></div>
+</div>
+
+<!-- Add-item modal -->
+<div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;width:480px;max-width:95vw;box-shadow:0 20px 40px rgba(0,0,0,.2)">
+    <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem">Add Item</h3>
+    <div style="display:grid;gap:10px">
+      <div class="add-field"><label>Category</label>
+        <select id="m-cat"></select></div>
+      <div class="add-field"><label>Name *</label>
+        <input id="m-name" placeholder="e.g. Velcro cable ties"></div>
+      <div class="add-field"><label>Note</label>
+        <input id="m-note" placeholder="optional description"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+        <div class="add-field"><label>Qty</label>
+          <input id="m-qty" type="number" min="0" value="1" oninput="modalSyncTotal()"></div>
+        <div class="add-field"><label>Qty label</label>
+          <input id="m-qty-label" placeholder="e.g. 8 stations"></div>
+        <div class="add-field"><label>Est. unit ($)</label>
+          <input id="m-est-unit" type="number" min="0" step="0.01" placeholder="0.00" oninput="modalSyncTotal()"></div>
+        <div class="add-field"><label>Est. total ($)</label>
+          <input id="m-est-total" type="number" min="0" step="0.01" placeholder="0.00" oninput="modalSyncUnit()"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="add-field"><label>Vendor</label>
+          <input id="m-vendor" placeholder="Amazon, PiShop…"></div>
+        <div class="add-field"><label>Vendor note</label>
+          <input id="m-vnote" placeholder="SKU, URL…"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:1.25rem">
+      <button class="btn btn-green" onclick="submitAddItem()">Add Item</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <span id="m-err" style="font-size:12px;color:#dc2626;align-self:center"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+let budgetData = null;
+
+async function load() {
+  budgetData = await (await fetch('/api/budget')).json();
+  render();
+}
+
+function r2(n) { return Math.round(n * 100) / 100; }
+function r4(n) { return Math.round(n * 10000) / 10000; }
+function fmt(n) { return n == null ? '' : '$' + Number(n).toFixed(2); }
+function fmtU(n) { return n == null ? '' : '$' + Number(n).toFixed(4).replace(/\.?0+$/, '') ; }
+
+function varHTML(actual, est) {
+  if (actual == null) return '<span class="muted">—</span>';
+  const v = r2(actual - est);
+  if (v === 0) return '<span class="muted">—</span>';
+  return `<span class="${v > 0 ? 'over' : 'under'}">${v > 0 ? '+' : ''}${fmt(v)}</span>`;
+}
+
+function getItem(catId, itemId) {
+  return budgetData.categories.find(c => c.id === catId).items.find(i => i.id === itemId);
+}
+
+function inputClass(val) { return val != null ? 'actual-input has-value' : 'actual-input'; }
+
+// ── Linked unit ↔ total inputs ────────────────────────────────────────────────
+
+function onUnitInput(catId, itemId) {
+  const item = getItem(catId, itemId);
+  const uInp = document.getElementById(`u-${catId}-${itemId}`);
+  const tInp = document.getElementById(`t-${catId}-${itemId}`);
+  const unit = parseFloat(uInp.value);
+  if (!isNaN(unit)) {
+    tInp.value = r2(unit * (item.qty || 1)).toFixed(2);
+    tInp.className = inputClass(unit);
+  } else {
+    tInp.value = '';
+    tInp.className = inputClass(null);
+  }
+  uInp.className = inputClass(isNaN(unit) ? null : unit);
+}
+
+function onTotalInput(catId, itemId) {
+  const item = getItem(catId, itemId);
+  const uInp = document.getElementById(`u-${catId}-${itemId}`);
+  const tInp = document.getElementById(`t-${catId}-${itemId}`);
+  const total = parseFloat(tInp.value);
+  const qty = item.qty || 1;
+  if (!isNaN(total)) {
+    uInp.value = r4(total / qty).toFixed(4).replace(/\.?0+$/, '');
+    uInp.className = inputClass(total);
+  } else {
+    uInp.value = '';
+    uInp.className = inputClass(null);
+  }
+  tInp.className = inputClass(isNaN(total) ? null : total);
+}
+
+async function onActualBlur(catId, itemId) {
+  const item = getItem(catId, itemId);
+  const uRaw = document.getElementById(`u-${catId}-${itemId}`).value.trim();
+  const tRaw = document.getElementById(`t-${catId}-${itemId}`).value.trim();
+  item.actual_unit  = uRaw === '' ? null : parseFloat(uRaw);
+  item.actual_total = tRaw === '' ? null : parseFloat(tRaw);
+  // Update variance cell in-place
+  const varCell = document.getElementById(`var-${catId}-${itemId}`);
+  if (varCell) varCell.innerHTML = varHTML(item.actual_total, item.estimated_total);
+  await persist();
+  updateFooters();
+  updateSummary();
+}
+
+// ── Partial DOM updates (avoids full re-render on blur) ───────────────────────
+
+function updateFooters() {
+  for (const cat of budgetData.categories) {
+    let catEst = 0, catAct = 0, pending = false;
+    for (const item of cat.items) {
+      catEst += item.estimated_total || 0;
+      if (item.actual_total != null) catAct += item.actual_total;
+      else pending = true;
+    }
+    const row = document.getElementById(`foot-${cat.id}`);
+    if (!row) continue;
+    row.querySelector('.foot-act').innerHTML = pending
+      ? `${fmt(catAct)}<span class="muted" style="font-size:10px"> +pend</span>`
+      : fmt(catAct);
+    row.querySelector('.foot-var').innerHTML = pending
+      ? '<span class="muted">partial</span>'
+      : varHTML(catAct, catEst);
+  }
+}
+
+function updateSummary() {
+  let totalEst = 0, totalAct = 0, totalPend = 0;
+  for (const cat of budgetData.categories)
+    for (const item of cat.items) {
+      totalEst += item.estimated_total || 0;
+      if (item.actual_total != null) totalAct += item.actual_total;
+      else totalPend += item.estimated_total || 0;
+    }
+  document.getElementById('s-est').textContent = fmt(totalEst);
+  document.getElementById('s-act').textContent = fmt(totalAct);
+  const v = r2(totalAct - (totalEst - totalPend));
+  const sVar = document.getElementById('s-var');
+  sVar.textContent = v === 0 ? '—' : (v > 0 ? '+' : '') + fmt(v);
+  sVar.className = 'sum-value ' + (v > 0 ? 'over' : v < 0 ? 'under' : '');
+  document.getElementById('s-pend').textContent = fmt(totalPend);
+}
+
+// ── Full render ───────────────────────────────────────────────────────────────
+
+function render() {
+  const container = document.getElementById('categories');
+  container.innerHTML = '';
+
+  for (const cat of budgetData.categories) {
+    let catEst = 0, catAct = 0, catPending = false;
+    for (const item of cat.items) {
+      catEst += item.estimated_total || 0;
+      if (item.actual_total != null) catAct += item.actual_total;
+      else catPending = true;
+    }
+
+    const rows = cat.items.map(item => {
+      const uVal = item.actual_unit  != null ? r4(item.actual_unit).toFixed(4).replace(/\.?0+$/, '') : '';
+      const tVal = item.actual_total != null ? Number(item.actual_total).toFixed(2) : '';
+      const uid = `u-${cat.id}-${item.id}`;
+      const tid = `t-${cat.id}-${item.id}`;
+      const inp = (id, val, fn) => `<input id="${id}" class="${inputClass(val !== '' ? parseFloat(val) : null)}"
+        type="number" min="0" step="any" value="${val}" placeholder="—"
+        oninput="${fn}('${cat.id}','${item.id}')"
+        onblur="onActualBlur('${cat.id}','${item.id}')"
+        onkeydown="if(event.key==='Enter')this.blur()">`;
+
+      return `<tr>
+        <td><div class="item-name">${item.name}</div>${item.note ? `<div class="item-note">${item.note}</div>` : ''}</td>
+        <td>${item.qty_label || item.qty}</td>
+        <td class="mono est-val">${fmtU(item.estimated_unit)}</td>
+        <td class="mono est-val">${fmt(item.estimated_total)}</td>
+        <td><div class="actual-wrap"><span class="pfx">$</span>${inp(uid, uVal, 'onUnitInput')}</div></td>
+        <td><div class="actual-wrap"><span class="pfx">$</span>${inp(tid, tVal, 'onTotalInput')}</div></td>
+        <td class="var-cell" id="var-${cat.id}-${item.id}">${varHTML(item.actual_total, item.estimated_total)}</td>
+        <td><span class="vendor-txt">${item.vendor || ''}</span>${item.vendor_note ? `<br><span class="vendor-txt" style="font-size:10px">${item.vendor_note}</span>` : ''}</td>
+        <td><button class="btn-del" onclick="deleteItem('${cat.id}','${item.id}')" title="Remove item">✕</button></td>
+      </tr>`;
+    }).join('');
+
+    const section = document.createElement('div');
+    section.className = 'cat-section';
+    section.id = `cat-${cat.id}`;
+    section.innerHTML = `
+      <div class="cat-header">
+        <div>
+          <span class="cat-title">${cat.name}</span>
+          ${cat.note ? `<span class="cat-note" style="margin-left:8px">${cat.note}</span>` : ''}
+        </div>
+        <div class="cat-actions">
+          <button class="btn btn-ghost" onclick="openModal('${cat.id}')">+ Add item</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr>
+          <th style="width:26%">Item</th>
+          <th style="width:7%">Qty</th>
+          <th class="r" style="width:8%">Est. Unit</th>
+          <th class="r" style="width:9%">Est. Total</th>
+          <th class="r" style="width:10%">Act. Unit</th>
+          <th class="r" style="width:10%">Act. Total</th>
+          <th class="r" style="width:8%">Variance</th>
+          <th style="width:17%">Vendor</th>
+          <th style="width:4%"></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot>
+          <tr class="subtotal" id="foot-${cat.id}">
+            <td colspan="3" style="font-weight:600">Subtotal</td>
+            <td class="mono">${fmt(catEst)}</td>
+            <td class="mono">—</td>
+            <td class="mono foot-act">${catPending ? `${fmt(catAct)}<span class="muted" style="font-size:10px"> +pend</span>` : fmt(catAct)}</td>
+            <td class="var-cell foot-var">${catPending ? '<span class="muted">partial</span>' : varHTML(catAct, catEst)}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>`;
+    container.appendChild(section);
+  }
+
+  updateSummary();
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────────
+
+async function deleteItem(catId, itemId) {
+  if (!confirm('Remove this item from the budget?')) return;
+  const cat = budgetData.categories.find(c => c.id === catId);
+  cat.items = cat.items.filter(i => i.id !== itemId);
+  await persist();
+  render();
+}
+
+// ── Persist ───────────────────────────────────────────────────────────────────
+
+async function persist() {
+  await fetch('/api/budget', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(budgetData),
+  });
+  const msg = document.getElementById('save-msg');
+  msg.classList.add('visible');
+  clearTimeout(msg._t);
+  msg._t = setTimeout(() => msg.classList.remove('visible'), 2500);
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+
+function openModal(catId) {
+  const sel = document.getElementById('m-cat');
+  sel.innerHTML = budgetData.categories.map(c =>
+    `<option value="${c.id}" ${c.id === catId ? 'selected' : ''}>${c.name}</option>`
+  ).join('');
+  ['m-name','m-note','m-qty-label','m-vendor','m-vnote'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-qty').value = 1;
+  document.getElementById('m-est-unit').value = '';
+  document.getElementById('m-est-total').value = '';
+  document.getElementById('m-err').textContent = '';
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+function modalSyncTotal() {
+  const qty  = parseFloat(document.getElementById('m-qty').value) || 1;
+  const unit = parseFloat(document.getElementById('m-est-unit').value);
+  if (!isNaN(unit)) document.getElementById('m-est-total').value = r2(unit * qty).toFixed(2);
+}
+
+function modalSyncUnit() {
+  const qty   = parseFloat(document.getElementById('m-qty').value) || 1;
+  const total = parseFloat(document.getElementById('m-est-total').value);
+  if (!isNaN(total)) document.getElementById('m-est-unit').value = r4(total / qty).toFixed(4).replace(/\.?0+$/, '');
+}
+
+async function submitAddItem() {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) { document.getElementById('m-err').textContent = 'Name is required.'; return; }
+
+  const catId = document.getElementById('m-cat').value;
+  const cat = budgetData.categories.find(c => c.id === catId);
+  const qty = parseInt(document.getElementById('m-qty').value) || 1;
+  const estUnit  = parseFloat(document.getElementById('m-est-unit').value) || 0;
+  const estTotal = parseFloat(document.getElementById('m-est-total').value) || r2(estUnit * qty);
+
+  cat.items.push({
+    id: Math.random().toString(36).slice(2, 10),
+    name,
+    note:         document.getElementById('m-note').value.trim(),
+    qty,
+    qty_label:    document.getElementById('m-qty-label').value.trim(),
+    estimated_unit:  estUnit,
+    estimated_total: estTotal,
+    actual_unit:  null,
+    actual_total: null,
+    vendor:       document.getElementById('m-vendor').value.trim(),
+    vendor_note:  document.getElementById('m-vnote').value.trim(),
+  });
+
+  closeModal();
+  await persist();
+  render();
+}
+
+load();
+</script>
+</body>
+</html>

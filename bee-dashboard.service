@@ -1,0 +1,21 @@
+[Unit]
+Description=BeeTracker Dashboard (Flask/Gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/bee
+ExecStart=/usr/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:5843 \
+    --timeout 60 \
+    --access-logfile /var/log/bee-dashboard-access.log \
+    --error-logfile  /var/log/bee-dashboard-error.log \
+    wsgi:app
+Restart=always
+RestartSec=5
+Environment=PYTHONPATH=/var/www/bee
+
+[Install]
+WantedBy=multi-user.target

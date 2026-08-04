@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bee VHF Telemetry Tracking — Parts List</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+  /* ── Header ── */
+  #header {
+    background: linear-gradient(135deg, #1a2332 0%, #0d1117 60%);
+    border-bottom: 1px solid #21262d;
+    padding: 32px 32px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  #header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  #header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: #f59e0b;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  h1 { font-size: 22px; font-weight: 700; color: #f0f6fc; letter-spacing: -0.02em; }
+  .header-sub { font-size: 12px; color: #8b949e; margin-top: 4px; }
+  .header-total-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.1em; }
+  #grand-display { font-size: 28px; font-weight: 700; color: #f59e0b; letter-spacing: -0.03em; }
+  #monthly-display { font-size: 11px; color: #8b949e; }
+  /* Station toggle */
+  #station-bar {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .station-label { font-size: 12px; color: #8b949e; }
+  .stn-btn {
+    padding: 5px 14px;
+    border-radius: 4px;
+    border: 1px solid #30363d;
+    background: transparent;
+    color: #8b949e;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .stn-btn.active {
+    border-color: #f59e0b;
+    background: rgba(245,158,11,0.15);
+    color: #f59e0b;
+  }
+  .station-hint { font-size: 11px; color: #6e7681; }
+  /* ── Main content ── */
+  #content { max-width: 900px; margin: 0 auto; padding: 24px 32px 0; }
+  /* ── Section card ── */
+  .section-card { margin-bottom: 16px; }
+  .section-header {
+    width: 100%;
+    text-align: left;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    padding: 14px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: inherit;
+    color: #f0f6fc;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+  }
+  .section-header:hover { background: rgba(255,255,255,0.04); }
+  .section-header.open { border-radius: 8px 8px 0 0; }
+  .sh-left { display: flex; align-items: center; gap: 12px; }
+  .sh-bar { width: 3px; height: 22px; border-radius: 2px; flex-shrink: 0; }
+  .sh-title { font-size: 14px; font-weight: 600; }
+  .sh-badge {
+    margin-left: 10px;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+  .sh-right { display: flex; align-items: center; gap: 16px; }
+  .sh-total { font-size: 16px; font-weight: 700; }
+  .sh-count { font-size: 10px; color: #6e7681; text-align: right; }
+  .sh-arrow {
+    color: #8b949e;
+    font-size: 16px;
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+  .sh-arrow.open { transform: rotate(90deg); }
+  /* ── Section body ── */
+  .section-body {
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+    display: none;
+  }
+  .section-body.open { display: block; }
+  .section-note {
+    padding: 12px 20px;
+    font-size: 12px;
+    color: #8b949e;
+    line-height: 1.6;
+    border-bottom: 1px solid transparent;
+  }
+  .note-icon { margin-right: 4px; }
+  /* ── Table ── */
+  .tbl-header {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 80px;
+    padding: 8px 20px;
+    border-bottom: 1px solid #21262d;
+    font-size: 10px;
+    color: #6e7681;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .tbl-header span:not(:first-child) { text-align: right; }
+  .tbl-header span:nth-child(2) { text-align: center; }
+  .tbl-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 80px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #161b22;
+    align-items: start;
+  }
+  .tbl-row:last-child { border-bottom: none; }
+  .tbl-row.even { background: rgba(255,255,255,0.01); }
+  .item-name { font-size: 13px; color: #f0f6fc; font-weight: 500; margin-bottom: 3px; }
+  .item-model { font-size: 11px; color: #6e7681; margin-bottom: 4px; }
+  .item-notes { font-size: 11px; color: #8b949e; line-height: 1.5; }
+  .item-source { font-size: 10px; margin-top: 4px; opacity: 0.8; }
+  .tbl-qty { text-align: center; padding-top: 2px; }
+  .tbl-qty .qty-main { font-size: 13px; color: #c9d1d9; }
+  .tbl-qty .qty-sub { font-size: 10px; color: #6e7681; }
+  .tbl-unit { text-align: right; padding-top: 2px; font-size: 13px; color: #c9d1d9; }
+  .tbl-unit .monthly-tag { font-size: 10px; color: #f97316; }
+  .tbl-line { text-align: right; padding-top: 2px; }
+  .line-total { font-size: 13px; font-weight: 600; color: #f0f6fc; }
+  .line-recurring { font-size: 12px; color: #f97316; }
+  .line-onhand { font-size: 12px; color: #6e7681; }
+  /* ── Software section ── */
+  #software-section {
+    margin-bottom: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  #software-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #software-header span:first-child { font-size: 14px; font-weight: 600; color: #f0f6fc; }
+  #software-header span:last-child { font-size: 12px; color: #3fb950; font-weight: 600; }
+  .sw-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 100px;
+    gap: 16px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #161b22;
+    align-items: center;
+  }
+  .sw-row:last-child { border-bottom: none; }
+  .sw-row.even { background: rgba(255,255,255,0.01); }
+  .sw-name { font-size: 13px; color: #58a6ff; font-weight: 500; }
+  .sw-purpose { font-size: 12px; color: #8b949e; }
+  .sw-cost { font-size: 11px; color: #3fb950; text-align: right; }
+  /* ── Grand total ── */
+  #total-box {
+    background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(245,158,11,0.03) 100%);
+    border: 1px solid rgba(245,158,11,0.27);
+    border-radius: 8px;
+    padding: 24px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .total-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: #8b949e; margin-bottom: 4px; }
+  .total-sub { font-size: 11px; color: #6e7681; }
+  #total-amount { font-size: 36px; font-weight: 700; color: #f59e0b; letter-spacing: -0.03em; }
+  #total-monthly { font-size: 12px; color: #f97316; }
+  /* ── Notes grid ── */
+  #notes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .note-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid #21262d;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .note-card-title { font-size: 13px; color: #f0f6fc; font-weight: 600; margin-bottom: 6px; }
+  .note-card-body { font-size: 12px; color: #8b949e; line-height: 1.6; }
+
+  @media (max-width: 600px) {
+    #header { padding: 20px 16px 16px; }
+    #content { padding: 16px 16px 0; }
+    .tbl-header, .tbl-row { grid-template-columns: 1fr 60px 60px 60px; }
+    #notes-grid { grid-template-columns: 1fr; }
+    .sw-row { grid-template-columns: 130px 1fr; }
+    .sw-cost { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div id="header-inner">
+    <div id="header-top">
+      <div>
+        <div class="header-eyebrow">Field Research Equipment Specification</div>
+        <h1>Bee VHF Telemetry Tracking System</h1>
+        <div class="header-sub">2 sample locations · 4 total receiver stations · 8 antennas · 20 transmitter tags</div>
+      </div>
+      <div style="text-align:right">
+        <div class="header-total-label">Est. Total Hardware</div>
+        <div id="grand-display">$0</div>
+        <div id="monthly-display"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="content">
+  <div id="sections-container"></div>
+
+  <!-- Software -->
+  <div id="software-section">
+    <div id="software-header">
+      <span>💾 Software Stack</span>
+      <span>All Free / Open Source</span>
+    </div>
+    <div id="software-rows"></div>
+  </div>
+
+  <!-- Grand total -->
+  <div id="total-box">
+    <div>
+      <div class="total-label" id="total-label-text">Estimated Total Hardware Cost (2 stations · 2 receivers each)</div>
+      <div class="total-sub">Excludes tag attachment consumables (&lt;$15), SIM data plans, and laptop/tools assumed on hand</div>
+    </div>
+    <div style="text-align:right">
+      <div id="total-amount">$0</div>
+      <div id="total-monthly"></div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div id="notes-grid"></div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────
+const sections = [
+  {
+    id: "tags",
+    label: "🐝 Bee Transmitter Tags",
+    color: "#f59e0b",
+    note: "Tags are glued to the thorax of each bee. ATS offers the lightest insect-rated tags. Order direct from ATS (atstrack.com) or Holohil (holohil.com) — lead time can be 4–6 weeks, so order early. Holohil also has a conservation grant program worth applying for.",
+    items: [
+      { name:"ATS Nano VHF Transmitter Tags", model:"ATS Model A2414 or similar (150–151 MHz)", qty:20, unitCost:185, source:"atstrack.com", notes:"~0.25g. Glue-on, 7–14 day battery life. Order unique frequencies per tag so each bee has its own ID." },
+      { name:"Cyanoacrylate Adhesive (Super Glue)", model:"Loctite Ultra Gel or equivalent", qty:2, unitCost:6, source:"Hardware store", notes:"For attaching tags to bee thorax. Gel formula preferred for better control." },
+    ]
+  },
+  {
+    id: "compute",
+    label: "🖥️ Compute & SDR — All Stations",
+    color: "#3b82f6",
+    note: "4 receiver stations total: 2 sample locations × 2 receivers each. Each station is a Raspberry Pi + 2 SDR dongles, one dongle per Yagi antenna. The tRackIT OS image is flashed onto each SD card before deployment.",
+    items: [
+      { name:"Raspberry Pi 4 Model B (2GB RAM)", model:"Raspberry Pi 4B", qty:4, unitCost:55, source:"raspberrypi.com / Adafruit / Amazon", notes:"One per receiver station. 2GB RAM is sufficient for tRackIT OS." },
+      { name:"Raspberry Pi Official USB-C Power Supply (5V/3A)", model:"RPi Official PSU", qty:4, unitCost:10, source:"raspberrypi.com / Amazon", notes:"One per station. Use the official PSU to avoid undervoltage issues." },
+      { name:"Nooelec NESDR SMArt v5 RTL-SDR Dongle", model:"NESDR SMArt v5 (100kHz–1.75GHz)", qty:8, unitCost:37.95, source:"nooelec.com / Amazon", notes:"2 per station × 4 stations = 8 total. One dongle per Yagi antenna. 0.5PPM TCXO for frequency accuracy." },
+      { name:"Powered USB Hub (4-port, 5V/3A)", model:"Anker 4-port powered hub or equivalent", qty:4, unitCost:16, source:"Amazon", notes:"One per station. Powers both SDR dongles cleanly off a single reliable source rather than the Pi's USB bus." },
+      { name:"MicroSD Card (64GB, Class 10 / A2)", model:"Samsung Endurance or SanDisk Endurance", qty:4, unitCost:14, source:"Amazon", notes:"One per station. Use an 'Endurance' rated card designed for continuous write cycles. Pre-flash tRackIT OS before deployment." },
+    ]
+  },
+  {
+    id: "antennas",
+    label: "📡 Antennas & RF Cabling — All Stations",
+    color: "#10b981",
+    note: "8 Yagi antennas total: 2 per station × 4 stations. Each pair points in opposite directions (180° apart) to cover both approach corridors at each sample location. Tune to your tag frequency band — typically 150–151 MHz.",
+    items: [
+      { name:"3-Element Yagi Antenna (150 MHz, VHF)", model:"Arrow Antenna 150 MHz 3-el Yagi or equivalent", qty:8, unitCost:114, source:"arrowantennas.com / DX Engineering", notes:"2 per station × 4 stations = 8 total. Verify the antenna covers your specific tag frequency (e.g., 150.100–150.900 MHz)." },
+      { name:"SMA Male to SMA Male Cable (choose 6–10ft length)", model:"Data Alliance SMA-M to SMA-M patch cable", qty:8, unitCost:11, source:"data-alliance.net", notes:"One per antenna = 8 total. Connects the Yagi's SMA female port to the dongle. Choose 6ft or 8ft for clean routing inside the enclosure." },
+      { name:"SMA Adapter Kit (SMA-M to SMA-F, right angle, barrel)", model:"Assorted SMA adapter pack", qty:2, unitCost:12, source:"Amazon", notes:"One pack per pair of stations = 2 packs total. Useful for routing cables cleanly inside each enclosure." },
+    ]
+  },
+  {
+    id: "enclosure",
+    label: "🧰 Enclosures & Mounting — All Stations",
+    color: "#8b5cf6",
+    note: "4 complete mast+enclosure assemblies — one per receiver station. The Pi, USB hub, and both dongles live in each weatherproof enclosure. The ground rod drives into the soil and the EMT conduit slips over it to form the mast.",
+    items: [
+      { name:"IP67 Weatherproof Plastic Enclosure (~200×150×75mm)", model:"Polycase WC-22 or Hammond 1554 series", qty:4, unitCost:32, source:"Polycase.com / Mouser / Amazon", notes:"One per station. IP67 rated for rain and humidity. Light grey or white exterior. Drill cable gland holes for 2 antenna runs + power entry." },
+      { name:"PG-11 Cable Glands (pack of 10)", model:"Nylon PG-11 cable glands", qty:2, unitCost:8, source:"Amazon", notes:"2 packs covers all 4 stations (3 glands per enclosure × 4 = 12 needed)." },
+      { name:"1/2\" x 10ft EMT Conduit (mast)", model:"Allied Tube & Conduit 853428 — Home Depot", qty:4, unitCost:6.42, source:"homedepot.com", notes:"One per station. Slips over the ground rod for a secure, stable mount. Easy to cut to height if needed." },
+      { name:"5/8\" x 8ft Copper-Coated Ground Rod", model:"Western Supply 615880/6258", qty:4, unitCost:17.53, source:"westernsupply.us", notes:"One per station. Drives into the ground as the anchor stake. The EMT conduit slides over it to form the mast." },
+      { name:"Aluminum Antenna Boom (1m)", model:'1" square aluminum tube', qty:4, unitCost:8, source:"Hardware store", notes:"One per station. Mount both Yagis at opposite ends pointing 180° apart." },
+    ]
+  },
+  {
+    id: "connectivity",
+    label: "📶 Connectivity — All Stations",
+    color: "#ec4899",
+    note: "Choose LTE if the field sites have cellular coverage — allows live monitoring from the lab. Choose LoRa if in a rural dead zone — one gateway covers all 4 stations. You don't need both options.",
+    items: [
+      { name:"USB LTE Dongle (Option A — cellular coverage)", model:"Huawei E3372 LTE USB Stick", qty:4, unitCost:45, source:"Amazon / eBay", notes:"One per station = 4 total. Plug-and-play on Raspberry Pi. Requires a data SIM — budget ~$10–15/month per station." },
+      { name:"LoRa HAT for Raspberry Pi (Option B — no cell coverage)", model:"Waveshare SX1262 LoRa HAT", qty:4, unitCost:30, source:"waveshare.com / Amazon", notes:"One per station = 4 total. Transmits detected signals to the central LoRa gateway up to 5km line-of-sight." },
+      { name:"LoRa Gateway / Concentrator (Option B — one for whole project)", model:"RAK7244 LoRaWAN Developer Gateway", qty:1, unitCost:110, source:"rakwireless.com / Amazon", notes:"One unit covers all 4 stations. Place at the study area edge. Connects to internet via WiFi or Ethernet at a nearby building." },
+    ]
+  },
+  {
+    id: "server",
+    label: "🗄️ Central Data Aggregation (Lab / Cloud) — One-Time",
+    color: "#14b8a6",
+    note: "All 4 stations send data here. InfluxDB stores the time-series signal data; Grafana provides real-time dashboards. A modest cloud VM (~$12/mo) works well, or an existing lab PC running Ubuntu.",
+    items: [
+      { name:"Lab Server or Mini PC (if not using cloud)", model:"Intel NUC or comparable mini PC (8GB RAM, Ubuntu)", qty:1, unitCost:200, source:"Amazon / eBay (used)", notes:"Only needed if not using a cloud VM. Any machine running Ubuntu 20.04+ and Docker will work." },
+      { name:"Cloud VM (alternative to local server)", model:"DigitalOcean / AWS Lightsail / Linode (2vCPU, 4GB RAM)", qty:1, unitCost:12, source:"DigitalOcean.com", notes:"Per month cost. Runs InfluxDB + Grafana in Docker. ~$72 for a 6-month summer field season.", monthly: true },
+    ]
+  },
+  {
+    id: "consumables",
+    label: "🔧 Consumables, Tools & Misc — One-Time",
+    color: "#6b7280",
+    note: "Small items that are easy to forget but essential in the field.",
+    items: [
+      { name:"Outdoor UV-Resistant Cable Ties (100-pack)", model:'11" nylon zip ties, black (UV stabilized)', qty:2, unitCost:8, source:"Amazon / hardware store", notes:"For securing cables and antenna elements across all 4 stations." },
+      { name:"Self-Amalgamating / Silicone Tape (2 rolls)", model:"3M Scotch 23 or similar", qty:2, unitCost:10, source:"Amazon", notes:"Waterproof wrap for outdoor SMA connections exposed to weather." },
+      { name:"Desiccant Silica Gel Packs (box of 50)", model:"2g silica gel packs", qty:1, unitCost:9, source:"Amazon", notes:"Place 2–3 inside each of the 4 enclosures to prevent condensation damage." },
+      { name:"Laptop or Field Tablet (for setup & SD card imaging)", model:"Any Linux-compatible laptop", qty:1, unitCost:0, source:"Assumed available", notes:"Needed to flash tRackIT OS onto all 4 SD cards and SSH into stations during setup." },
+      { name:"MicroSD Card Reader", model:"USB MicroSD card reader", qty:1, unitCost:8, source:"Amazon", notes:"For flashing tRackIT OS images onto each of the 4 SD cards." },
+    ]
+  },
+];
+
+const softwareItems = [
+  { name:"tRackIT OS", purpose:"Station OS + signal detection + MQTT publishing", cost:"Free (GNU GPL 3.0)", source:"github.com/Nature40/tRackIT-OS" },
+  { name:"InfluxDB", purpose:"Time-series database for all detected tag events", cost:"Free (open source)", source:"influxdata.com" },
+  { name:"Grafana", purpose:"Real-time dashboards — visit frequency & return rate charts", cost:"Free (open source)", source:"grafana.com" },
+  { name:"WireGuard VPN", purpose:"Secure remote access to field stations", cost:"Free (open source)", source:"wireguard.com" },
+  { name:"R + lubridate / ggplot2", purpose:"Visit frequency analysis, return interval statistics, plots", cost:"Free (CRAN)", source:"cran.r-project.org" },
+];
+
+const keyNotes = [
+  { icon:"⏰", title:"Order Tags Early", text:"ATS and Holohil transmitter lead times can be 4–6 weeks. Prioritize this order first." },
+  { icon:"📡", title:"Verify Tag Frequency", text:"Confirm your tag frequency band (e.g., 150.100–150.900 MHz) before ordering antennas — they must match." },
+  { icon:"🎓", title:"Holohil Grant Program", text:"Holohil offers up to C$2,500 in free transmitters for conservation research. Application deadlines quarterly." },
+  { icon:"🔌", title:"Power at Site", text:"Run a standard outdoor-rated extension cord (12AWG minimum for runs over 25ft) to each of the 4 stations. Use a weatherproof outlet box or covered power strip at each mast base to keep the Pi connection dry." },
+];
+
+// ── State ─────────────────────────────────────────────────────────────────
+const openState = {};
+sections.forEach(s => openState[s.id] = true);
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function fmt(n) { return '$' + n.toLocaleString(); }
+
+function sectionTotal(section) {
+  return section.items.reduce((sum, item) => {
+    if (item.monthly) return sum;
+    return sum + item.qty * item.unitCost;
+  }, 0);
+}
+
+function grandTotal() { return sections.reduce((s, sec) => s + sectionTotal(sec), 0); }
+function monthlyTotal() {
+  return sections.reduce((sum, sec) =>
+    sum + sec.items.filter(i => i.monthly).reduce((s, i) => s + i.qty * i.unitCost, 0), 0);
+}
+
+// ── Render ────────────────────────────────────────────────────────────────
+function render() {
+  const gt = grandTotal();
+  const mt = monthlyTotal();
+  document.getElementById('grand-display').textContent = fmt(gt);
+  document.getElementById('monthly-display').textContent = mt > 0 ? `+ ~${fmt(mt)}/mo recurring` : '';
+  document.getElementById('total-amount').textContent = fmt(gt);
+  document.getElementById('total-label-text').textContent = `Estimated Total Hardware Cost — Full Project (4 stations)`;
+  document.getElementById('total-monthly').textContent = mt > 0 ? `+ ~${fmt(mt)}/month connectivity` : '';
+
+  const container = document.getElementById('sections-container');
+  container.innerHTML = '';
+  sections.forEach(section => {
+    const total = sectionTotal(section);
+    const isOpen = openState[section.id];
+    const card = document.createElement('div');
+    card.className = 'section-card';
+
+    const hdr = document.createElement('button');
+    hdr.className = 'section-header' + (isOpen ? ' open' : '');
+    hdr.style.borderColor = section.color + '33';
+    hdr.onclick = () => { openState[section.id] = !openState[section.id]; render(); };
+    hdr.innerHTML = `
+      <div class="sh-left">
+        <div class="sh-bar" style="background:${section.color}"></div>
+        <span class="sh-title">${section.label}</span>
+      </div>
+      <div class="sh-right">
+        <div>
+          <div class="sh-total" style="color:${section.color}">${fmt(total)}</div>
+          <div class="sh-count">${section.items.filter(i=>!i.monthly).length} line items</div>
+        </div>
+        <span class="sh-arrow${isOpen?' open':''}">›</span>
+      </div>`;
+    card.appendChild(hdr);
+
+    if (isOpen) {
+      const body = document.createElement('div');
+      body.className = 'section-body open';
+      body.style.border = `1px solid ${section.color}33`;
+
+      if (section.note) {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'section-note';
+        noteDiv.style.background = section.color + '0a';
+        noteDiv.style.borderBottomColor = section.color + '22';
+        noteDiv.innerHTML = `<span class="note-icon" style="color:${section.color}">ℹ</span> ${section.note}`;
+        body.appendChild(noteDiv);
+      }
+
+      body.innerHTML += `<div class="tbl-header"><span>Component</span><span style="text-align:center">Qty</span><span>Unit $</span><span>Line $</span></div>`;
+
+      section.items.forEach((item, idx) => {
+        const lineTotal = item.monthly ? null : item.qty * item.unitCost;
+        let unitHtml = item.unitCost === 0 ? '—' : `$${item.unitCost}`;
+        if (item.monthly) unitHtml += `<div class="monthly-tag">/mo</div>`;
+        let lineHtml = item.monthly ? `<span class="line-recurring">recurring</span>`
+          : item.unitCost === 0 ? `<span class="line-onhand">on hand</span>`
+          : `<span class="line-total">${fmt(lineTotal)}</span>`;
+
+        const row = document.createElement('div');
+        row.className = 'tbl-row' + (idx % 2 === 0 ? ' even' : '');
+        row.innerHTML = `
+          <div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-model">${item.model}</div>
+            <div class="item-notes">${item.notes}</div>
+            <div class="item-source" style="color:${section.color}">⟶ ${item.source}</div>
+          </div>
+          <div class="tbl-qty"><div class="qty-main">${item.qty}</div></div>
+          <div class="tbl-unit">${unitHtml}</div>
+          <div class="tbl-line">${lineHtml}</div>`;
+        body.appendChild(row);
+      });
+      card.appendChild(body);
+    }
+    container.appendChild(card);
+  });
+
+  const swContainer = document.getElementById('software-rows');
+  swContainer.innerHTML = '';
+  softwareItems.forEach((s, idx) => {
+    swContainer.innerHTML += `
+      <div class="sw-row${idx%2===0?' even':''}">
+        <div class="sw-name">${s.name}</div>
+        <div class="sw-purpose">${s.purpose}</div>
+        <div class="sw-cost">${s.cost}</div>
+      </div>`;
+  });
+
+  const notesGrid = document.getElementById('notes-grid');
+  notesGrid.innerHTML = '';
+  keyNotes.forEach(n => {
+    notesGrid.innerHTML += `
+      <div class="note-card">
+        <div class="note-card-title">${n.icon} ${n.title}</div>
+        <div class="note-card-body">${n.text}</div>
+      </div>`;
+  });
+}
+
+render();
+</script>
+</body>
+</html>
