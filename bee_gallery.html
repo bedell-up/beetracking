@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bee Cam Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: -apple-system, Arial, sans-serif; background: #14161a; color: #eee; margin: 0; padding: 20px; }
+    h1 { font-size: 1.2rem; font-weight: 600; margin: 0 0 4px; }
+    .meta { color: #999; font-size: 0.85rem; margin-bottom: 16px; }
+    .filters { margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .filters a { padding: 5px 12px; background: #1e2126; border-radius: 14px; text-decoration: none; color: #ccc; font-size: 0.8rem; }
+    .filters a.active { background: #3a6; color: #fff; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    .card { background: #1e2126; border-radius: 8px; overflow: hidden; position: relative; }
+    .card img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    .card .cap { padding: 6px 8px; font-size: 0.72rem; color: #aaa; display: flex; justify-content: space-between; }
+    .badge { background: #664; color: #fd6; border-radius: 4px; padding: 1px 5px; font-size: 0.65rem; }
+    a.imglink { display: block; }
+    .pager { margin-top: 20px; display: flex; gap: 10px; align-items: center; }
+    .pager a { padding: 6px 12px; background: #1e2126; border-radius: 6px; text-decoration: none; color: #7fc8ff; }
+  </style>
+</head>
+<body>
+  <h1>Bee Cam Gallery</h1>
+  <div class="meta">{{ total }} images &middot; page {{ page }} of {{ total_pages }}{% if active_station %} &middot; station {{ active_station }}{% endif %}</div>
+
+  <div class="filters">
+    <a href="{{ url_for('bee_gallery.gallery') }}" class="{{ 'active' if not active_station }}">All stations</a>
+    {% for s in stations %}
+      <a href="{{ url_for('bee_gallery.gallery', station=s) }}" class="{{ 'active' if s == active_station }}">Station {{ s }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="grid">
+    {% for item in items %}
+    <div class="card">
+      {% if item.full_url %}
+        <a class="imglink" href="{{ item.full_url }}" target="_blank">
+          <img src="{{ item.thumb_url }}" loading="lazy" alt="{{ item.filename }}">
+        </a>
+      {% else %}
+        <img src="{{ item.thumb_url }}" loading="lazy" alt="{{ item.filename }}">
+      {% endif %}
+      <div class="cap">
+        <span>{{ item.station }} &middot; {{ item.timestamp }}</span>
+        {% if not item.has_full %}<span class="badge">thumb only</span>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="pager">
+    {% if page > 1 %}<a href="?station={{ active_station or '' }}&page={{ page - 1 }}">&larr; Newer</a>{% endif %}
+    {% if page < total_pages %}<a href="?station={{ active_station or '' }}&page={{ page + 1 }}">Older &rarr;</a>{% endif %}
+  </div>
+</body>
+</html>
