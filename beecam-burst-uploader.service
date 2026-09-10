@@ -1,0 +1,15 @@
+[Unit]
+Description=Bee cam burst uploader (v2)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/beetracking
+ExecStart=/usr/bin/python3 /home/pi/beetracking/scripts/burst_uploader.py --config /home/pi/beetracking/config.ini
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
