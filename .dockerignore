@@ -1,0 +1,10 @@
+.git
+__pycache__
+*.pyc
+*.zip
+*.docx
+docs/
+beetracker_credentials.json
+budget_data.json
+overview_data.json
+groups_config.json
