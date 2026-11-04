@@ -51,7 +51,7 @@ Students checked on the stations remotely through [Pi Connect](https://connect.r
 
 ## Cost
 
-Each station cost **$148**, so the 8-station network came to **$1,184**.
+Each station cost **$175**, so the 8-station network came to **$1,400**.
 
 | Part | Cost per station | 8 stations |
 |---|---:|---:|
@@ -61,12 +61,12 @@ Each station cost **$148**, so the 8-station network came to **$1,184**.
 | MicroSD card (endurance rated) | $30 | $240 |
 | Weatherproof enclosure and hardware | $25 | $200 |
 | Gooseneck camera mount | $16 | $128 |
-| **Total** | **$148** | **$1,184** |
+| 20K power bank | $15 | $120 |
+| PVC pipe stake | $12 | $96 |
+| **Total** | **$175** | **$1,400** |
 
 Not included in the total:
 
-- **Power banks.** 20K power banks, $15 each.
-- **PVC pipe stakes.** $12 each.
 - **Field supplies,** such as superglue gel and paint pens for backup marking.
 - **Pi Connect remote access.** This costs about $0.50 per station per month.
 
