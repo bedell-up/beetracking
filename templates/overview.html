@@ -458,9 +458,9 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
           <li>Saves a verification image of each detection event</li>
           <li>Applies 10-second cooldown to prevent duplicate logging</li>
         </ul>
-        <p style="margin-top:.75rem">Detection CSVs from all 8 stations sync automatically
-        to a shared Google Sheet each evening, providing real-time data access
-        for the full research team.</p>
+        <p style="margin-top:.75rem">Each station uploads its new detections to a shared
+        Google Sheet every hour from 10am to 6pm, so the whole team can see the data
+        during the day.</p>
         <div class="highlight-box">
           <strong>Cross-campus movement confirmed</strong> when the same tag ID
           appears at both a Group 1 (river) and Group 2 (SLUG) station
@@ -540,13 +540,13 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
       <div class="appendix-section">
         <div class="appendix-heading">Hardware — per station (8 total)</div>
         <table class="spec-table">
-          <tr><td>Compute</td><td>Raspberry Pi 5 1GB · BCM2712 quad-core 2.4GHz</td></tr>
-          <tr><td>Camera</td><td>Waveshare IMX219 · 8MP Sony sensor · 120° FOV · MIPI-CSI</td></tr>
-          <tr><td>Resolution</td><td>3280 × 2464 full sensor · continuous video capture</td></tr>
-          <tr><td>Storage</td><td>Samsung PRO Endurance 64GB MicroSD · endurance-rated</td></tr>
-          <tr><td>Power</td><td>Anker PowerCore 10K · ~6hr field runtime · USB LED keep-alive</td></tr>
-          <tr><td>Enclosure</td><td>IP65 hinged weatherproof box · PATIKIL 15.7" gooseneck arm</td></tr>
-          <tr><td>Mount</td><td>PVC pipe stake · 1/4"-20 brass heat-set insert in box lid</td></tr>
+          <tr><td>Compute</td><td>Raspberry Pi Zero 2 W · with cooler</td></tr>
+          <tr><td>Camera</td><td>8MP camera module and ribbon cable</td></tr>
+          <tr><td>Resolution</td><td>3280 × 2464 full sensor</td></tr>
+          <tr><td>Storage</td><td>Endurance-rated MicroSD card</td></tr>
+          <tr><td>Power</td><td>20,000mAh USB power bank</td></tr>
+          <tr><td>Enclosure</td><td>Weatherproof enclosure · gooseneck camera mount</td></tr>
+          <tr><td>Mount</td><td>PVC pipe stake</td></tr>
           <tr><td>Network</td><td>UPIoT MAC-registered · Pi Connect remote terminal access</td></tr>
         </table>
       </div>
@@ -558,7 +558,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
           <tr><td>Detection</td><td>OpenCV-contrib 4.13.0 · <code>DICT_APRILTAG_36h11</code> · ArUco3</td></tr>
           <tr><td>Camera</td><td>picamera2 · libcamera v0.7.1</td></tr>
           <tr><td>Data sync</td><td>gspread + google-auth · Google Sheets API v4</td></tr>
-          <tr><td>Auto-start</td><td>crontab <code>@reboot</code> · 20s delay · daily sync <code>0 20 * * *</code></td></tr>
+          <tr><td>Auto-start</td><td>crontab <code>@reboot</code> · 20s delay · hourly sync 10am–6pm <code>0 10-18 * * *</code></td></tr>
           <tr><td>Source code</td><td>github.com/bedell-up/beetracking</td></tr>
         </table>
       </div>
@@ -567,8 +567,8 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
         <div class="appendix-heading">Tag detection parameters</div>
         <table class="spec-table">
           <tr><td>Tag family</td><td>AprilTag 36h11 · 587 unique IDs · strong error correction</td></tr>
-          <tr><td>Printed size</td><td>10–12mm · minimum reliable size for <em>B. vosnesenskii</em> thorax</td></tr>
-          <tr><td>Detection height</td><td>10–15cm · tag appears ~60px in 3280px-wide frame</td></tr>
+          <tr><td>Printed size</td><td>6mm</td></tr>
+          <tr><td>Detection height</td><td>Camera 10–15cm above the flowers</td></tr>
           <tr><td>Detection mode</td><td>ArUco3 · <code>minSideLengthCanonicalImg = 32</code></td></tr>
           <tr><td>Error correction</td><td><code>errorCorrectionRate = 1.0</code> · maximum tolerance</td></tr>
           <tr><td>Cooldown</td><td>10 seconds per tag ID · prevents duplicate logging</td></tr>
@@ -590,7 +590,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
     </div>
   </div>
 
-  <p class="footer">University of Portland · SURE 2026 Research · Franz River Campus Pollinator Study · bedell@up.edu · Last updated June 2026</p>
+  <p class="footer">University of Portland · SURE 2026 Research · Franz River Campus Pollinator Study · bedell@up.edu · Last updated November 2026</p>
 
 </div>
 
