@@ -156,7 +156,6 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 <body>
 
 <header class="header">
-  <span class="bee-icon">🐝</span>
   <div>
     <div class="header-title">Bombus vosnesenskii Tracking</div>
     <div class="header-sub">AprilTag Detection Dashboard · University of Portland · PI: Dr. Tara Prestholdt · Summer 2026</div>
@@ -164,7 +163,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 </header>
 
 <div class="edit-mode-banner" id="edit-banner">
-  ✏️ Edit mode — click any highlighted section to edit. Click <strong>Save Changes</strong> when done.
+  Edit mode — click any highlighted section to edit. Click <strong>Save Changes</strong> when done.
 </div>
 
 <nav class="nav">
@@ -175,7 +174,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
   <div class="nav-right">
     <span class="saved-msg" id="saved-msg">✓ Saved</span>
     <button class="btn-cancel" id="cancel-btn" onclick="cancelEdit()" style="display:none">✕ Cancel</button>
-    <button class="btn-edit" id="edit-btn" onclick="enterEditMode()">✏️ Edit Page</button>
+    <button class="btn-edit" id="edit-btn" onclick="enterEditMode()">Edit Page</button>
   </div>
 </nav>
 
@@ -204,8 +203,8 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
     </p>
     {% endif %}</div>
     <div class="hero-meta" data-editable="hero_meta">{% if data.get('hero_meta') %}{{ data['hero_meta'] | safe }}{% else %}
-      <span class="meta-pill green">🐝 Bombus vosnesenskii</span>
-      <span class="meta-pill amber">⚠️ Portland Harbor Superfund Site</span>
+      <span class="meta-pill green">Bombus vosnesenskii</span>
+      <span class="meta-pill amber">Portland Harbor Superfund Site</span>
       <span class="meta-pill blue">University of Portland</span>
       <span class="meta-pill blue">Franz River Campus</span>
       <span class="meta-pill green">SLUG Community Garden</span>
@@ -239,7 +238,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 
   <div class="card">
     <div class="card-header">
-      <span class="card-title">🏭 Portland Harbor Superfund Site</span>
+      <span class="card-title">Portland Harbor Superfund Site</span>
       <span class="pill pill-amber">EPA designated 2000</span>
     </div>
     <div class="card-body" data-editable="superfund_body">{% if data.get('superfund_body') %}{{ data['superfund_body'] | safe }}{% else %}
@@ -272,12 +271,12 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 
   <div class="card">
     <div class="card-header">
-      <span class="card-title">📅 Remediation timeline</span>
+      <span class="card-title">Remediation timeline</span>
     </div>
     <div class="card-body" data-editable="remediation_timeline_body">{% if data.get('remediation_timeline_body') %}{{ data['remediation_timeline_body'] | safe }}{% else %}
       <div class="timeline">
         <div class="timeline-item">
-          <div class="timeline-dot amber">⚠️</div>
+          <div class="timeline-dot amber"></div>
           <div class="timeline-content">
             <div class="timeline-date">2000</div>
             <div class="timeline-title">EPA Superfund Designation</div>
@@ -285,7 +284,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot amber">📋</div>
+          <div class="timeline-dot amber"></div>
           <div class="timeline-content">
             <div class="timeline-date">2006</div>
             <div class="timeline-title">University–EPA Agreement</div>
@@ -293,7 +292,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot amber">🚜</div>
+          <div class="timeline-dot amber"></div>
           <div class="timeline-content">
             <div class="timeline-date">2012–2014</div>
             <div class="timeline-title">Active Remediation</div>
@@ -301,7 +300,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot">🏛️</div>
+          <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="timeline-date">2014–present</div>
             <div class="timeline-title">Franz River Campus Development</div>
@@ -309,7 +308,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot">🐝</div>
+          <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="timeline-date">2026</div>
             <div class="timeline-title">This Study</div>
@@ -325,7 +324,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 
   <div class="card">
     <div class="card-header">
-      <span class="card-title">🔬 Core research questions</span>
+      <span class="card-title">Core research questions</span>
     </div>
     <div class="card-body" data-editable="research_question_body">{% if data.get('research_question_body') %}{{ data['research_question_body'] | safe }}{% else %}
       <div class="highlight-box">
@@ -340,19 +339,19 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 
       <div class="outcomes">
         <div class="outcome outcome-green">
-          <div class="outcome-title">🌿 Site fidelity</div>
+          <div class="outcome-title">Site fidelity</div>
           River bees stay at the river's edge — indicating the remediated habitat provides
           sufficient floral resources to support resident foragers independently.
           A positive restoration outcome.
         </div>
         <div class="outcome outcome-blue">
-          <div class="outcome-title">🔗 Habitat connectivity</div>
+          <div class="outcome-title">Habitat connectivity</div>
           Bees move between both sites — indicating the riparian corridor and SLUG garden
           function as a connected network. Even partial recovery integrates into the
           broader urban pollinator landscape.
         </div>
         <div class="outcome outcome-amber">
-          <div class="outcome-title">📊 Asymmetric movement</div>
+          <div class="outcome-title">Asymmetric movement</div>
           Movement is directional — e.g. river bees visit SLUG but not vice versa.
           Reveals relative habitat quality differences and foraging range relative
           to patch resource availability.
@@ -379,7 +378,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 
   <div class="card">
     <div class="card-header">
-      <span class="card-title">🗺️ Detection station layout</span>
+      <span class="card-title">Detection station layout</span>
       <span class="pill">University of Portland campus</span>
     </div>
     <div class="card-body" data-editable="study_sites_body">{% if data.get('study_sites_body') %}{{ data['study_sites_body'] | safe }}{% else %}
@@ -407,7 +406,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
       </div>
 
       <div class="placeholder-box">
-        <strong>📋 To be added:</strong> Native riparian plant species established at the
+        <strong>To be added:</strong> Native riparian plant species established at the
         Franz River Campus during and after remediation. This list will document the
         specific floral resources available to foraging bees at the remediated site
         and strengthen the ecological link between habitat restoration and pollinator recovery.
@@ -424,7 +423,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
   <div class="two-col">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">🏷️ Tagging protocol</span>
+        <span class="card-title">Tagging protocol</span>
       </div>
       <div class="card-body" data-editable="tagging_body">{% if data.get('tagging_body') %}{{ data['tagging_body'] | safe }}{% else %}
         <p>Bees are captured by hand net at both sites during peak foraging hours.
@@ -448,7 +447,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 
     <div class="card">
       <div class="card-header">
-        <span class="card-title">📊 Automated detection</span>
+        <span class="card-title">Automated detection</span>
       </div>
       <div class="card-body" data-editable="detection_body">{% if data.get('detection_body') %}{{ data['detection_body'] | safe }}{% else %}
         <p>Each station runs continuous AprilTag detection during daylight hours.
@@ -474,7 +473,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
   <!-- SIGNIFICANCE -->
   <div class="card">
     <div class="card-header">
-      <span class="card-title">🌍 Research significance</span>
+      <span class="card-title">Research significance</span>
     </div>
     <div class="card-body" data-editable="significance_body">{% if data.get('significance_body') %}{{ data['significance_body'] | safe }}{% else %}
       <p>Documenting native pollinator recovery at a Superfund remediation site
@@ -511,7 +510,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
   <!-- TEAM -->
   <div class="card" style="margin-bottom:1.25rem">
     <div class="card-header">
-      <span class="card-title">👥 Student research team</span>
+      <span class="card-title">Student research team</span>
     </div>
     <div class="card-body" data-editable="team_body">{% if data.get('team_body') %}{{ data['team_body'] | safe }}{% else %}
       <p>This project is led by the University of Portland Biology Department and
@@ -533,7 +532,7 @@ code{font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px
 
   <div class="card">
     <div class="card-header">
-      <span class="card-title">⚙️ Detection system specifications</span>
+      <span class="card-title">Detection system specifications</span>
       <span class="pill">for technical reviewers</span>
     </div>
     <div class="card-body">
@@ -604,7 +603,7 @@ function enterEditMode() {
     _savedHTML[el.dataset.editable] = el.innerHTML;
     el.contentEditable = 'true';
   });
-  document.getElementById('edit-btn').textContent = '💾 Save Changes';
+  document.getElementById('edit-btn').textContent = 'Save Changes';
   document.getElementById('edit-btn').onclick = saveChanges;
   document.getElementById('cancel-btn').style.display = '';
   document.getElementById('edit-banner').classList.add('show');
@@ -644,7 +643,7 @@ function saveChanges() {
 }
 
 function exitEditMode() {
-  document.getElementById('edit-btn').textContent = '✏️ Edit Page';
+  document.getElementById('edit-btn').textContent = 'Edit Page';
   document.getElementById('edit-btn').onclick = enterEditMode;
   document.getElementById('cancel-btn').style.display = 'none';
   document.getElementById('edit-banner').classList.remove('show');
