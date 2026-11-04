@@ -65,9 +65,8 @@ Each station cost **$148**, so the 8-station network came to **$1,184**.
 
 Not included in the total:
 
-- **Power banks.** We used Anker PowerCore 10K packs we already owned.
-- **PVC pipe stakes.** These came from existing stock.
-- **3D-printed camera housings.** The only cost was a few grams of filament.
+- **Power banks.** 20K power banks, $15 each.
+- **PVC pipe stakes.** $12 each.
 - **Field supplies,** such as superglue gel and paint pens for backup marking.
 - **Pi Connect remote access.** This costs about $0.50 per station per month.
 
